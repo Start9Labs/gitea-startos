@@ -24,7 +24,9 @@ export const manageSmtp = sdk.Action.withInput(
   inputSpec,
 
   // optionally pre-fill the input form
-  async ({ effects }) => sdk.store.getOwn(effects, sdk.StorePath.smtp).const(),
+  async ({ effects }) => ({
+    smtp: await sdk.store.getOwn(effects, sdk.StorePath.smtp).const(),
+  }),
 
   // the execution function
   async ({ effects, input }) =>

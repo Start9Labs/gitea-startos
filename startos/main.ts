@@ -61,10 +61,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * Each daemon defines its own health check, which can optionally be exposed to the user.
    */
   return sdk.Daemons.of(effects, started, healthReceipts).addDaemon('primary', {
-    subcontainer: { imageId: 'gitea' },
+    subcontainer: await sdk.SubContainer.of(
+      effects,
+      { imageId: 'gitea' },
+      sdk.Mounts.of().addVolume('main', null, '/data', false),
+      'gitea-sub',
+    ),
     command: ['/usr/bin/entrypoint', '--', '/usr/bin/s6-svscan', '/etc/s6'],
     env,
-    mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
     ready: {
       display: 'Web Interface',
       fn: () =>

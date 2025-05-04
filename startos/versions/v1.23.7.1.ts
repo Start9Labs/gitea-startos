@@ -4,9 +4,9 @@ import { readFile, rmdir } from 'fs/promises'
 import { load } from 'js-yaml'
 import { getHttpInterfaceUrls } from '../utils'
 
-export const v1_22_4_0 = VersionInfo.of({
-  version: '1.22.4:0',
-  releaseNotes: 'Revamped for StartOS 0.3.6',
+export const v1_23_7_1 = VersionInfo.of({
+  version: '1.23.7:1',
+  releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
       // get old config.yaml

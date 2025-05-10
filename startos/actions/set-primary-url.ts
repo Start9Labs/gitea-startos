@@ -1,7 +1,8 @@
+import { store } from '../file-models/store.json'
 import { sdk } from '../sdk'
 import { getHttpInterfaceUrls } from '../utils'
 
-const { InputSpec, Value, Variants } = sdk
+const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
   url: Value.dynamicSelect(async ({ effects }) => {
@@ -43,12 +44,11 @@ export const setPrimaryUrl = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async ({ effects }) => ({
-    url: await sdk.store
-      .getOwn(effects, sdk.StorePath.GITEA__server__ROOT_URL)
-      .const(),
+    url:
+      (await store.read((s) => s.GITEA__server__ROOT_URL).once()) || undefined,
   }),
 
   // the execution function
   async ({ effects, input }) =>
-    sdk.store.setOwn(effects, sdk.StorePath.GITEA__server__ROOT_URL, input.url),
+    store.merge(effects, { GITEA__server__ROOT_URL: input.url }),
 )

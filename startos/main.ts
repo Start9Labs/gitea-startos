@@ -1,6 +1,7 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { uiPort } from './utils'
+import { store } from './file-models/store.json'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -11,7 +12,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('Starting Gitea!')
 
   const { GITEA__server__ROOT_URL, GITEA__security__SECRET_KEY, smtp } =
-    await sdk.store.getOwn(effects, sdk.StorePath).const()
+    (await store.read().const(effects))!
 
   let smtpCredentials: T.SmtpValue | null = null
 
@@ -64,7 +65,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     subcontainer: await sdk.SubContainer.of(
       effects,
       { imageId: 'gitea' },
-      sdk.Mounts.of().addVolume('main', null, '/data', false),
+      sdk.Mounts.of().mountVolume({
+        volumeId: 'main',
+        subpath: null,
+        mountpoint: '/data',
+        readonly: false,
+      }),
       'gitea-sub',
     ),
     command: ['/usr/bin/entrypoint', '--', '/usr/bin/s6-svscan', '/etc/s6'],

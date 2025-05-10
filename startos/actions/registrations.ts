@@ -1,3 +1,4 @@
+import { store } from '../file-models/store.json'
 import { sdk } from '../sdk'
 
 export const registrations = sdk.Action.withoutInput(
@@ -6,9 +7,9 @@ export const registrations = sdk.Action.withoutInput(
 
   // metadata
   async ({ effects }) => {
-    const disabled = await sdk.store
-      .getOwn(effects, sdk.StorePath.GITEA__service__DISABLE_REGISTRATION)
-      .const()
+    const disabled = await store
+      .read((s) => s.GITEA__service__DISABLE_REGISTRATION)
+      .const(effects)
 
     return {
       name: disabled ? 'Enable Registrations' : 'Disable Registrations',
@@ -26,14 +27,12 @@ export const registrations = sdk.Action.withoutInput(
 
   // the execution function
   async ({ effects }) => {
-    const disabled = await sdk.store
-      .getOwn(effects, sdk.StorePath.GITEA__service__DISABLE_REGISTRATION)
-      .const()
+    const disabled = await store
+      .read((s) => s.GITEA__service__DISABLE_REGISTRATION)
+      .const(effects)
 
-    sdk.store.setOwn(
-      effects,
-      sdk.StorePath.GITEA__service__DISABLE_REGISTRATION,
-      !disabled,
-    )
+    await store.merge(effects, {
+      GITEA__service__DISABLE_REGISTRATION: !disabled,
+    })
   },
 )

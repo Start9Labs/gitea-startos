@@ -17,7 +17,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: null,
     path: '',
-    search: {},
+    query: {},
   })
   const httpReceipt = await httpOrigin.export([httpInterface])
 
@@ -34,7 +34,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     schemeOverride: null,
     username: 'git',
     path: '',
-    search: {},
+    query: {},
   })
   const sshReceipt = await sshOrigin.export([sshInterface])
 

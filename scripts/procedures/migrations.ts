@@ -38,4 +38,4 @@ export const migration: T.ExpectedExports.migration = compat.migrations
         throw new Error("Downgrade not supported");
       },
     },
-  }, "1.22.6");
+  }, "1.23.7");

@@ -1,10 +1,10 @@
 id: gitea
 title: "Gitea"
-version: 1.22.6
+version: 1.23.7
 release-notes: |
   * Upstream code update
-  * Update bundling process to use Deno emit module
-  * Full list of upstream changes available [here](https://github.com/go-gitea/gitea/compare/v1.22.0...v1.22.6)
+  * Many bug fixes and improvements
+  * Full list of upstream changes available [here](https://github.com/go-gitea/gitea/compare/v1.22.6...v1.23.7)
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/gitea-startos"
 upstream-repo: "https://github.com/go-gitea/gitea"

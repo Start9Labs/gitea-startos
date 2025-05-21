@@ -44,4 +44,4 @@ else
 fi
 
 printf "\n\n [i] Starting Gitea ...\n\n"
-exec tini /usr/bin/entrypoint -- /bin/s6-svscan /etc/s6
+exec tini /usr/bin/entrypoint -- /usr/bin/s6-svscan /etc/s6

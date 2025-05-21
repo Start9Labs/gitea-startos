@@ -1,5 +1,5 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
-import { readFile, rmdir } from 'fs/promises'
+import { readFile, rm } from 'fs/promises'
 import { load } from 'js-yaml'
 import { getHttpInterfaceUrls } from '../../utils'
 import { store } from '../../fileModels/store.json'
@@ -10,18 +10,20 @@ export const v1_23_7_1 = VersionInfo.of({
   migrations: {
     up: async ({ effects }) => {
       // get old config.yaml
-      const { 'email-notifications': smtp, 'local-mode': localMode } = load(
+      const configYaml = load(
         await readFile('/root/start9/config.yaml', 'utf-8'),
-      ) as {
-        'email-notifications'?: {
-          'smtp-host': string
-          'smtp-port': number
-          'smtp-user': string
-          'smtp-pass': string
-          'from-name': string
-        }
-        'local-mode': boolean
-      }
+      ) as
+        | {
+            'email-notifications'?: {
+              'smtp-host': string
+              'smtp-port': number
+              'smtp-user': string
+              'smtp-pass': string
+              'from-name': string
+            }
+            'local-mode': boolean
+          }
+        | undefined
 
       const urls = await getHttpInterfaceUrls(effects)
 
@@ -32,20 +34,20 @@ export const v1_23_7_1 = VersionInfo.of({
           'base64',
         ),
         GITEA__server__ROOT_URL: urls.find((u) =>
-          localMode
+          configYaml?.['local-mode']
             ? u.includes('.local')
             : u.startsWith('http:') && u.includes('.onion'),
         )!,
         GITEA__service__DISABLE_REGISTRATION: true,
-        smtp: smtp
+        smtp: configYaml?.['email-notifications']
           ? {
               selection: 'custom',
               value: {
-                server: smtp['smtp-host'],
-                port: smtp['smtp-port'],
-                from: smtp['from-name'],
-                login: smtp['smtp-user'],
-                password: smtp['smtp-pass'],
+                server: configYaml['email-notifications']['smtp-host'],
+                port: configYaml['email-notifications']['smtp-port'],
+                from: configYaml['email-notifications']['from-name'],
+                login: configYaml['email-notifications']['smtp-user'],
+                password: configYaml['email-notifications']['smtp-pass'],
               },
             }
           : {
@@ -55,7 +57,7 @@ export const v1_23_7_1 = VersionInfo.of({
       })
 
       // remove old start9 dir
-      await rmdir('/data/start9')
+      await rm('/data/start9', { recursive: true }).catch(console.error)
     },
     down: IMPOSSIBLE,
   },

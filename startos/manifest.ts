@@ -3,7 +3,7 @@ import { setupManifest } from '@start9labs/start-sdk'
 export const manifest = setupManifest({
   id: 'gitea',
   title: 'Gitea',
-  license: 'mit',
+  license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/gitea-startos',
   upstreamRepo: 'https://github.com/Start9Labs/gitea',
   supportSite: 'https://docs.gitea.io/',
@@ -17,7 +17,7 @@ export const manifest = setupManifest({
   images: {
     gitea: {
       source: {
-        dockerTag: 'gitea/gitea',
+        dockerTag: 'gitea/gitea:1.23.7',
       },
     },
   },

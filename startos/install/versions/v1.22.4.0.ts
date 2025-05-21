@@ -2,7 +2,7 @@ import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 import { readFile, rmdir } from 'fs/promises'
 import { load } from 'js-yaml'
 import { getHttpInterfaceUrls } from '../../utils'
-import { store } from '../../file-models/store.json'
+import { store } from '../../fileModels/store.json'
 
 export const v1_22_4_0 = VersionInfo.of({
   version: '1.22.4:0',

@@ -1,8 +1,8 @@
 import { utils, VersionGraph } from '@start9labs/start-sdk'
-import { store } from '../file-models/store.json'
+import { store } from '../fileModels/store.json'
 import { current, other } from './versions'
 
-export const versions = VersionGraph.of({
+export const versionGraph = VersionGraph.of({
   current,
   other,
   preInstall: async (effects) => {

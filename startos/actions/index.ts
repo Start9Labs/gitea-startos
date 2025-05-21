@@ -1,7 +1,7 @@
 import { sdk } from '../sdk'
-import { setPrimaryUrl } from './set-primary-url'
+import { setPrimaryUrl } from './setPrimaryUrl'
 import { registrations } from './registrations'
-import { manageSmtp } from './manage-smtp'
+import { manageSmtp } from './manageSmtp'
 
 export const actions = sdk.Actions.of()
   .addAction(setPrimaryUrl)

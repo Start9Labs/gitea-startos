@@ -4,6 +4,9 @@ import { sdk } from '../sdk'
 
 export const setPrimaryUrlTask = sdk.setupOnInit(async (effects) => {
   if (!(await store.read((s) => s.GITEA__server__ROOT_URL).const(effects))) {
-    await sdk.action.requestOwn(effects, setPrimaryUrl, 'critical')
+    await sdk.action.requestOwn(effects, setPrimaryUrl, 'critical', {
+      reason:
+        'Gitea requires a primary URL for the purpose of creating links, sending invites, etc.',
+    })
   }
 })

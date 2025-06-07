@@ -11,7 +11,10 @@ export const v1_23_7_1 = VersionInfo.of({
     up: async ({ effects }) => {
       // get old config.yaml
       const configYaml = load(
-        await readFile('/root/start9/config.yaml', 'utf-8'),
+        await readFile(
+          '/media/startos/volumes/main/start9/config.yaml',
+          'utf-8',
+        ),
       ) as
         | {
             'email-notifications'?: {
@@ -57,7 +60,9 @@ export const v1_23_7_1 = VersionInfo.of({
       })
 
       // remove old start9 dir
-      await rm('/data/start9', { recursive: true }).catch(console.error)
+      await rm('/media/startos/volumes/main/start9', { recursive: true }).catch(
+        console.error,
+      )
     },
     down: IMPOSSIBLE,
   },

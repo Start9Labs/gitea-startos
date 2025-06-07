@@ -73,8 +73,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       }),
       'gitea-sub',
     ),
-    command: ['/usr/bin/entrypoint', '--', '/usr/bin/s6-svscan', '/etc/s6'],
-    env,
+    exec: {
+      command: ['/usr/bin/entrypoint', '--', '/usr/bin/s6-svscan', '/etc/s6'],
+      env,
+    },
     ready: {
       display: 'Web Interface',
       fn: () =>

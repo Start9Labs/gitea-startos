@@ -3,11 +3,11 @@ name: Build Service
 on:
   workflow_dispatch:
   pull_request:
-    paths-ignore: ["*.md"]
-    branches: ["main", "master"]
+    paths-ignore: ['*.md']
+    branches: ['main', 'master', 'update/040']
   push:
-    paths-ignore: ["*.md"]
-    branches: ["main", "master"]
+    paths-ignore: ['*.md']
+    branches: ['main', 'master', 'update/040']
 
 jobs:
   BuildPackage:
@@ -26,7 +26,7 @@ jobs:
         run: |
           start-cli init
           RUST_LOG=debug RUST_BACKTRACE=1 make
-          PACKAGE_ID=$(grep -o "id: '[^']*'" startos/manifest.ts | sed "s/id: '\([^']*\)'/\1/")
+          PACKAGE_ID=$(start-cli s9pk inspect *.s9pk manifest | jq -r '.id')
           echo "package_id=${PACKAGE_ID}" >> $GITHUB_ENV
           printf "\n SHA256SUM: $(sha256sum ${PACKAGE_ID}.s9pk) \n"
         shell: bash

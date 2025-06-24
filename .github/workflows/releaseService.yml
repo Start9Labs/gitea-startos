@@ -3,7 +3,7 @@ name: Release Service
 on:
   push:
     tags:
-      - "v*.*"
+      - 'v*.*'
 
 jobs:
   ReleasePackage:
@@ -24,8 +24,8 @@ jobs:
         run: |
           start-cli init
           RUST_LOG=debug RUST_BACKTRACE=1 make
-          PACKAGE_ID=$(grep -o "id: '[^']*'" startos/manifest.ts | sed "s/id: '\([^']*\)'/\1/")
-          PACKAGE_TITLE=$(grep -o "title: '[^']*'" startos/manifest.ts | sed "s/title: '\([^']*\)'/\1/")
+          PACKAGE_ID=$(start-cli s9pk inspect *.s9pk manifest | jq -r '.id')
+          PACKAGE_TITLE=$(start-cli s9pk inspect *.s9pk manifest | jq -r '.title')
           echo "package_id=${PACKAGE_ID}" >> $GITHUB_ENV
           echo "package_title=${PACKAGE_TITLE}" >> $GITHUB_ENV
           printf "\n SHA256SUM: $(sha256sum ${PACKAGE_ID}.s9pk) \n"
@@ -39,20 +39,9 @@ jobs:
       - name: Generate changelog
         run: |
           echo "## What's Changed" > change-log.txt
-
-          # Find the latest version file in startos/versions/
-          LATEST_VERSION_FILE=$(find startos/versions/ -name "v*.ts" | sort -V | tail -n 1)
           echo "" >> change-log.txt
-
-          # Extract release notes using a more precise approach for TypeScript
-          RELEASE_NOTES=$(grep -o "releaseNotes: '[^']*'" "${LATEST_VERSION_FILE}" | sed "s/releaseNotes: '\([^']*\)'/\1/")
-          if [ -z "$RELEASE_NOTES" ]; then
-            # Try with double quotes if single quotes didn't work
-            RELEASE_NOTES=$(grep -o 'releaseNotes: "[^"]*"' "${LATEST_VERSION_FILE}" | sed 's/releaseNotes: "\([^"]*\)"/\1/')
-          fi
-
+          RELEASE_NOTES=$(start-cli s9pk inspect *.s9pk manifest | jq -r '.releaseNotes') 
           echo "${RELEASE_NOTES}" >> change-log.txt
-
           echo "## SHA256 Hash" >> change-log.txt
           echo '```' >> change-log.txt
           sha256sum ${{ env.package_id }}.s9pk >> change-log.txt
@@ -70,16 +59,16 @@ jobs:
             ./${{ env.package_id }}.s9pk
             ./${{ env.package_id }}.s9pk.sha256
 
-      - name: Publish to Registry
-        env:
-          S9DEVKEY: ${{ secrets.S9DEVKEY }}
-          S9REGISTRY: ${{ secrets.S9REGISTRY }}
-        run: |
-          if [[ -z "$S9DEVKEY" || -z "$S9REGISTRY" ]]; then
-            echo "Publish skipped: missing registry credentials."
-          else
-            mkdir -p ~/.startos
-            echo "$S9DEVKEY" > ~/.startos/developer.key.pem
-            start-cli --registry https://$S9REGISTRY registry package add ${{ env.package_id }}.s9pk ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/${{ env.package_id }}.s9pk
-          fi
-        shell: bash
+      # - name: Publish to Registry
+      #   env:
+      #     S9DEVKEY: ${{ secrets.S9DEVKEY }}
+      #     S9REGISTRY: ${{ secrets.S9REGISTRY }}
+      #   run: |
+      #     if [[ -z "$S9DEVKEY" || -z "$S9REGISTRY" ]]; then
+      #       echo "Publish skipped: missing registry credentials."
+      #     else
+      #       mkdir -p ~/.startos
+      #       echo "$S9DEVKEY" > ~/.startos/developer.key.pem
+      #       start-cli --registry https://$S9REGISTRY registry package add ${{ env.package_id }}.s9pk ${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/${{ env.package_id }}.s9pk
+      #     fi
+      #   shell: bash

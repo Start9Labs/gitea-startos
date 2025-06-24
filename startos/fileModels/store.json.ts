@@ -1,7 +1,7 @@
 import { matches, FileHelper } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 
-const { object, string, boolean, any } = matches
+const { object, string, boolean } = matches
 
 const shape = object({
   GITEA__server__ROOT_URL: string,
@@ -13,7 +13,7 @@ const shape = object({
   }),
 })
 
-export const store = FileHelper.json(
+export const storeJson = FileHelper.json(
   { volumeId: 'main', subpath: '/store.json' },
   shape,
 )

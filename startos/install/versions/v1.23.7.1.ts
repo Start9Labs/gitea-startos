@@ -2,7 +2,7 @@ import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 import { readFile, rm } from 'fs/promises'
 import { load } from 'js-yaml'
 import { getHttpInterfaceUrls } from '../../utils'
-import { store } from '../../fileModels/store.json'
+import { storeJson } from '../../fileModels/store.json'
 
 export const v1_23_7_1 = VersionInfo.of({
   version: '1.23.7:1',
@@ -31,7 +31,7 @@ export const v1_23_7_1 = VersionInfo.of({
       const urls = await getHttpInterfaceUrls(effects)
 
       // initialize the store
-      await store.write(effects, {
+      await storeJson.write(effects, {
         GITEA__security__SECRET_KEY: await readFile(
           '/data/start9/secret-key.txt',
           'base64',

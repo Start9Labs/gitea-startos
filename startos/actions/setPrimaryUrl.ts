@@ -1,4 +1,4 @@
-import { store } from '../fileModels/store.json'
+import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 import { getHttpInterfaceUrls } from '../utils'
 
@@ -45,10 +45,11 @@ export const setPrimaryUrl = sdk.Action.withInput(
   // optionally pre-fill the input form
   async ({ effects }) => ({
     url:
-      (await store.read((s) => s.GITEA__server__ROOT_URL).once()) || undefined,
+      (await storeJson.read((s) => s.GITEA__server__ROOT_URL).once()) ||
+      undefined,
   }),
 
   // the execution function
   async ({ effects, input }) =>
-    store.merge(effects, { GITEA__server__ROOT_URL: input.url }),
+    storeJson.merge(effects, { GITEA__server__ROOT_URL: input.url }),
 )

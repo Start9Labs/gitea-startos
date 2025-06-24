@@ -1,7 +1,7 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { uiPort } from './utils'
-import { store } from './fileModels/store.json'
+import { storeJson } from './fileModels/store.json'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -12,7 +12,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('Starting Gitea!')
 
   const { GITEA__server__ROOT_URL, GITEA__security__SECRET_KEY, smtp } =
-    (await store.read().const(effects))!
+    (await storeJson.read().const(effects))!
 
   let smtpCredentials: T.SmtpValue | null = null
 

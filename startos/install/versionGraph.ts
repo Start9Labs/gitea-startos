@@ -1,12 +1,12 @@
 import { utils, VersionGraph } from '@start9labs/start-sdk'
-import { store } from '../fileModels/store.json'
+import { storeJson } from '../fileModels/store.json'
 import { current, other } from './versions'
 
 export const versionGraph = VersionGraph.of({
   current,
   other,
   preInstall: async (effects) => {
-    await store.write(effects, {
+    await storeJson.write(effects, {
       GITEA__security__SECRET_KEY: utils.getDefaultString({
         charset: 'A-Z,a-z,0-9,+,/',
         len: 32,

@@ -1,4 +1,4 @@
-import { store } from '../fileModels/store.json'
+import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
 export const registrations = sdk.Action.withoutInput(
@@ -7,7 +7,7 @@ export const registrations = sdk.Action.withoutInput(
 
   // metadata
   async ({ effects }) => {
-    const disabled = await store
+    const disabled = await storeJson
       .read((s) => s.GITEA__service__DISABLE_REGISTRATION)
       .const(effects)
 
@@ -27,11 +27,11 @@ export const registrations = sdk.Action.withoutInput(
 
   // the execution function
   async ({ effects }) => {
-    const disabled = await store
+    const disabled = await storeJson
       .read((s) => s.GITEA__service__DISABLE_REGISTRATION)
       .const(effects)
 
-    await store.merge(effects, {
+    await storeJson.merge(effects, {
       GITEA__service__DISABLE_REGISTRATION: !disabled,
     })
   },

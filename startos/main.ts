@@ -9,7 +9,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    *
    * In this section, we fetch any resources or run any desired preliminary commands.
    */
-  console.info('Starting Gitea!')
+  console.info('[i] Starting Gitea!')
 
   const { GITEA__server__ROOT_URL, GITEA__security__SECRET_KEY, smtp } =
     (await storeJson.read().const(effects))!

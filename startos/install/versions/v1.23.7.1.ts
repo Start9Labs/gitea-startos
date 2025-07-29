@@ -33,14 +33,15 @@ export const v1_23_7_1 = VersionInfo.of({
       // initialize the store
       await storeJson.write(effects, {
         GITEA__security__SECRET_KEY: await readFile(
-          '/data/start9/secret-key.txt',
+          '/media/startos/volumes/main/start9/secret-key.txt',
           'base64',
         ),
-        GITEA__server__ROOT_URL: urls.find((u) =>
-          configYaml?.['local-mode']
-            ? u.includes('.local')
-            : u.startsWith('http:') && u.includes('.onion'),
-        )!,
+        GITEA__server__ROOT_URL:
+          urls.find((u) =>
+            configYaml?.['local-mode']
+              ? u.includes('.local')
+              : u.startsWith('http:') && u.includes('.onion'),
+          ) || '',
         GITEA__service__DISABLE_REGISTRATION: true,
         smtp: configYaml?.['email-notifications']
           ? {

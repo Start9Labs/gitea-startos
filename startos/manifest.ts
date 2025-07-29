@@ -9,6 +9,8 @@ export const manifest = setupManifest({
   supportSite: 'https://docs.gitea.io/',
   marketingSite: 'https://gitea.io/',
   donationUrl: null,
+  docsUrl:
+    'https://github.com/Start9Labs/gitea-startos/blob/master/instructions.md',
   description: {
     short: 'A painless self-hosted Git service',
     long: 'Gitea is a community managed lightweight code hosting solution written in Go. It is published under the MIT license',

@@ -25,7 +25,7 @@ export const manifest = setupManifest({
   images: {
     gitea: {
       source: {
-        dockerTag: 'gitea/gitea:1.23.7',
+        dockerTag: 'gitea/gitea:1.25.1',
       },
       arch: architectures
     } as SDKImageInputSpec,

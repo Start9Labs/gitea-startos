@@ -90,7 +90,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   })
 })
 
-type GiteaEnv = Partial<NonNullable<GiteaMailer>> & {
+type GiteaEnv = GiteaMailer & {
   GITEA__lfs__PATH: '/data/git/lfs'
   GITEA__server__ROOT_URL: string
   GITEA__security__INSTALL_LOCK: 'true'

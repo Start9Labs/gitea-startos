@@ -3,6 +3,8 @@ import { sdk } from './sdk'
 
 export const uiPort = 3000
 
+export const httpInterfaceId = 'http'
+
 export async function getHttpInterfaceUrls(
   effects: Effects,
 ): Promise<string[]> {

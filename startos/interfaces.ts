@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { uiPort } from './utils'
+import { httpInterfaceId, uiPort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const uiMulti = sdk.MultiHost.of(effects, 'ui-multi')
@@ -10,7 +10,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   })
   const httpInterface = sdk.createInterface(effects, {
     name: 'Web UI and git (HTTP)',
-    id: 'http',
+    id: httpInterfaceId,
     description: 'Web UI for Gitea. Also used for git over HTTP',
     type: 'ui',
     masked: false,

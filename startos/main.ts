@@ -11,8 +11,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
   console.info('[i] Starting Gitea!')
 
-  const { GITEA__server__ROOT_URL, GITEA__security__SECRET_KEY, smtp } =
-    (await storeJson.read().const(effects))!
+  const {
+    GITEA__server__ROOT_URL,
+    GITEA__security__SECRET_KEY,
+    GITEA__service__DISABLE_REGISTRATION,
+    smtp,
+  } = (await storeJson.read().const(effects))!
 
   let smtpCredentials: T.SmtpValue | null = null
 
@@ -42,6 +46,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const env: GiteaEnv = {
     GITEA__lfs__PATH: '/data/git/lfs',
     GITEA__server__ROOT_URL,
+    GITEA__service__DISABLE_REGISTRATION: String(
+      GITEA__service__DISABLE_REGISTRATION,
+    ),
     GITEA__security__INSTALL_LOCK: 'true',
     GITEA__security__SECRET_KEY,
     ...(mailer || {}),
@@ -88,6 +95,7 @@ type GiteaEnv = Partial<NonNullable<GiteaMailer>> & {
   GITEA__server__ROOT_URL: string
   GITEA__security__INSTALL_LOCK: 'true'
   GITEA__security__SECRET_KEY: string
+  GITEA__service__DISABLE_REGISTRATION: string
 }
 
 type GiteaMailer =

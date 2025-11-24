@@ -48,7 +48,7 @@ export const resetAdmin = sdk.Action.withInput(
         ? 'Generate a new password for your admin user'
         : 'Create your admin user and password',
       warning: null,
-      allowedStatuses: adminUserCreated ? 'only-running' : 'only-running',
+      allowedStatuses: 'only-running',
       group: null,
       visibility: 'enabled',
     }
@@ -62,22 +62,18 @@ export const resetAdmin = sdk.Action.withInput(
     const adminUserCreated = await storeJson
       .read((s) => s.adminUserCreated)
       .once()
-    
+
     if (adminUserCreated) {
-      const storedUsername = await storeJson
-        .read((s) => s.adminUsername)
-        .once()
-      const storedEmail = await storeJson
-        .read((s) => s.adminEmail)
-        .once()
-      
+      const storedUsername = await storeJson.read((s) => s.adminUsername).once()
+      const storedEmail = await storeJson.read((s) => s.adminEmail).once()
+
       return {
         username: storedUsername || undefined,
         email: storedEmail || undefined,
         password: undefined, // Will be generated, but field is required
       }
     }
-    
+
     return {}
   },
 
@@ -122,10 +118,10 @@ export const resetAdmin = sdk.Action.withInput(
 
       if (passwordResult.exitCode !== 0) {
         const errorMsg =
-          passwordResult.stderr?.toString() || passwordResult.stdout?.toString() || 'Unknown error'
-        throw new Error(
-          `Failed to reset admin password: ${errorMsg}`,
-        )
+          passwordResult.stderr?.toString() ||
+          passwordResult.stdout?.toString() ||
+          'Unknown error'
+        throw new Error(`Failed to reset admin password: ${errorMsg}`)
       }
 
       // Show the generated password
@@ -186,10 +182,10 @@ export const resetAdmin = sdk.Action.withInput(
 
       if (result.exitCode !== 0) {
         const errorMsg =
-          result.stderr?.toString() || result.stdout?.toString() || 'Unknown error'
-        throw new Error(
-          `Failed to create admin user: ${errorMsg}`,
-        )
+          result.stderr?.toString() ||
+          result.stdout?.toString() ||
+          'Unknown error'
+        throw new Error(`Failed to create admin user: ${errorMsg}`)
       }
 
       // Store admin user info for future edits
@@ -203,4 +199,3 @@ export const resetAdmin = sdk.Action.withInput(
     }
   },
 )
-

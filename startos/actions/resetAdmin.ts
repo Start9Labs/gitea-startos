@@ -39,7 +39,7 @@ export const inputSpec = InputSpec.of({
 
     return {
       name: 'Admin User',
-      default: '',
+      default: admins[0],
       values: admins.reduce(
         (obj, name) => ({
           ...obj,

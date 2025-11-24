@@ -1,9 +1,17 @@
 import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
 import { sdk } from './sdk'
+import { utils } from '@start9labs/start-sdk'
 
 export const uiPort = 3000
 
 export const httpInterfaceId = 'http'
+
+export function getPassword() {
+  return utils.getDefaultString({
+    charset: 'a-z,A-Z,1-9,!,@,$,%,&,*',
+    len: 22,
+  })
+}
 
 export const mount = sdk.Mounts.of().mountVolume({
   volumeId: 'main',

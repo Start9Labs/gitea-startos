@@ -14,8 +14,8 @@ export const registrations = sdk.Action.withoutInput(
     return {
       name: disabled ? 'Enable Registrations' : 'Disable Registrations',
       description: disabled
-        ? 'Allow new accounts to be created on your server'
-        : 'Prohibit new accounts from being created on your server',
+        ? 'Registrations are currently disabled. Run this action to permit new registrations.'
+        : 'Registrations are currently enabled. Run this action to prohibit new registrations.',
       warning: disabled
         ? 'Anyone with your Gitea URL will be able to create an account on your server, which represents a security risk. Be careful!'
         : null,

@@ -21,13 +21,15 @@ export const v1_25_1_1 = VersionInfo.of({
           subpath: 'start9/config.yaml',
         },
         matches.object({
-          'email-notifications': matches.object({
-            'smtp-host': matches.string.optional(),
-            'smtp-port': matches.number.optional(),
-            'smtp-user': matches.string.optional(),
-            'smtp-pass': matches.string.optional(),
-            'from-name': matches.string.optional(),
-          }).optional(),
+          'email-notifications': matches
+            .object({
+              'smtp-host': matches.string.optional(),
+              'smtp-port': matches.number.optional(),
+              'smtp-user': matches.string.optional(),
+              'smtp-pass': matches.string.optional(),
+              'from-name': matches.string.optional(),
+            })
+            .optional(),
           'local-mode': matches.boolean.optional(),
         }),
       )
@@ -69,7 +71,8 @@ export const v1_25_1_1 = VersionInfo.of({
                 port: legacyConfig['email-notifications']['smtp-port'] || 587,
                 from: legacyConfig['email-notifications']['from-name'] || '',
                 login: legacyConfig['email-notifications']['smtp-user'] || '',
-                password: legacyConfig['email-notifications']['smtp-pass'] || '',
+                password:
+                  legacyConfig['email-notifications']['smtp-pass'] || '',
               },
             }
           : {

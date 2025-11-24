@@ -1,4 +1,3 @@
-import { setPrimaryUrl } from '../actions/setPrimaryUrl'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 import { getHttpInterfaceUrls } from '../utils'
@@ -14,9 +13,12 @@ export const taskSetPrimaryUrl = sdk.setupOnInit(async (effects) => {
   console.log('** URLS **', httpUrls)
 
   if (!rootUrl || !httpUrls.includes(rootUrl)) {
-    await sdk.action.createOwnTask(effects, setPrimaryUrl, 'critical', {
-      reason:
-        'Gitea requires a primary URL for the purpose of creating links, sending invites, etc.',
-    })
+    await storeJson.merge(
+      effects,
+      {
+        GITEA__server__ROOT_URL: httpUrls.find((u) => u.includes('.local')),
+      },
+      { allowWriteAfterConst: true },
+    )
   }
 })

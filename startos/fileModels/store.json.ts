@@ -11,9 +11,6 @@ const shape = object({
     selection: 'disabled',
     value: {},
   }),
-  adminUserCreated: boolean.optional(),
-  adminUsername: string.optional(),
-  adminEmail: string.optional(),
 })
 
 export const storeJson = FileHelper.json(

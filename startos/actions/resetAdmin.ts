@@ -90,7 +90,7 @@ export const resetAdmin = sdk.Action.withInput(
             '/bin/sh',
             'git',
             '-c',
-            `gitea admin user change-password --username ${input.username} --password ${password} --must-change-password=false --work-path /data`,
+            `gitea admin user change-password --username "${input.username}" --password "${password}" --must-change-password=false --work-path /data`,
           ],
           {
             env: {

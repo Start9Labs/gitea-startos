@@ -12,7 +12,7 @@ export const versionGraph = VersionGraph.of({
         len: 32,
       }),
       GITEA__server__ROOT_URL: '',
-      GITEA__service__DISABLE_REGISTRATION: true,
+      GITEA__service__DISABLE_REGISTRATION: false,
       smtp: {
         selection: 'disabled',
         value: {},

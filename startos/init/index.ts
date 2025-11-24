@@ -5,7 +5,6 @@ import { versionGraph } from '../install/versionGraph'
 import { actions } from '../actions'
 import { restoreInit } from '../backups'
 import { taskSetPrimaryUrl } from './taskSetPrimaryUrl'
-import { taskCreateAdmin } from './taskCreateAdmin'
 
 export const init = sdk.setupInit(
   restoreInit,
@@ -14,7 +13,6 @@ export const init = sdk.setupInit(
   setDependencies,
   actions,
   taskSetPrimaryUrl,
-  taskCreateAdmin,
 )
 
 export const uninit = sdk.setupUninit(versionGraph)

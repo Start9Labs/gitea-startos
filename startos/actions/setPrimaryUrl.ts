@@ -17,9 +17,7 @@ export const inputSpec = InputSpec.of({
         }),
         {} as Record<string, string>,
       ),
-      default:
-        systemUrls.find((u) => u.startsWith('http:') && u.includes('.onion')) ||
-        '',
+      default: '',
     }
   }),
 })

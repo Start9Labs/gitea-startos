@@ -16,7 +16,7 @@ export async function getHttpInterfaceUrls(
   effects: Effects,
 ): Promise<string[]> {
   const httpInterface = await sdk.serviceInterface
-    .getOwn(effects, 'http')
+    .getOwn(effects, httpInterfaceId)
     .const()
 
   return httpInterface?.addressInfo?.urls || []

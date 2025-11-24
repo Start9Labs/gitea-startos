@@ -5,6 +5,13 @@ export const uiPort = 3000
 
 export const httpInterfaceId = 'http'
 
+export const mount = sdk.Mounts.of().mountVolume({
+  volumeId: 'main',
+  subpath: null,
+  mountpoint: '/data',
+  readonly: false,
+})
+
 export async function getHttpInterfaceUrls(
   effects: Effects,
 ): Promise<string[]> {

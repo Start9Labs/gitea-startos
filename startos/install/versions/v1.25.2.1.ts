@@ -9,8 +9,8 @@ import { readFile, rm } from 'fs/promises'
 import { getHttpInterfaceUrls } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 
-export const v1_25_1_1 = VersionInfo.of({
-  version: '1.25.1:1-alpha.1',
+export const v1_25_2_1 = VersionInfo.of({
+  version: '1.25.2:1-alpha.0',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {

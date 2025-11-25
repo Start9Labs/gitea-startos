@@ -61,7 +61,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    *
    * Each daemon defines its own health check, which can optionally be exposed to the user.
    */
-  return sdk.Daemons.of(effects, started).addDaemon('primary', {
+  const baseDaemons = sdk.Daemons.of(effects, started).addDaemon('primary', {
     subcontainer: await sdk.SubContainer.of(
       effects,
       { imageId: 'gitea' },
@@ -78,15 +78,48 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       env,
     },
     ready: {
-      display: 'Web Interface',
+      display: null,
       fn: () =>
         sdk.healthCheck.checkPortListening(effects, uiPort, {
-          successMessage: 'Server is ready',
+          successMessage: 'Gitea is ready',
           errorMessage:
-            'Server is experiencing an issue. Please check the logs.',
+            'Gitea is experiencing an issue. Please check the logs.',
         }),
     },
     requires: [],
+  })
+
+  const withRegistrationWarning = !GITEA__service__DISABLE_REGISTRATION
+    ? baseDaemons.addHealthCheck('registration-warning', {
+        ready: {
+          display: 'Registration is enabled',
+          gracePeriod: 0,
+          fn: async () => ({
+            result: 'failure',
+            message:
+              'For security purposes, user account registration should be disabled when not in use. You can disable it in the Gitea actions menu.',
+          }),
+        },
+        requires: [],
+      })
+    : baseDaemons
+
+  return withRegistrationWarning.addHealthCheck('web-interface', {
+    ready: {
+      display: 'Web Interface',
+      gracePeriod: 60000,
+      fn: () =>
+        sdk.healthCheck.checkWebUrl(
+          effects,
+          `http://gitea.startos:${uiPort}/api/healthz`,
+          {
+            successMessage: 'Gitea is ready',
+            errorMessage:
+              'Gitea is still starting. If this persists, please check the logs.',
+          },
+        ),
+    },
+    requires: ['primary'],
   })
 })
 

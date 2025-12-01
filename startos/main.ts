@@ -2,6 +2,7 @@ import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { uiPort } from './utils'
 import { storeJson } from './fileModels/store.json'
+import { createAdmin } from './actions/createAdmin'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -11,12 +12,18 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
   console.info('[i] Starting Gitea!')
 
+  const store = await storeJson.read().const(effects)
+
+  if (!store) {
+    throw new Error('Store not found')
+  }
+
   const {
     GITEA__server__ROOT_URL,
     GITEA__security__SECRET_KEY,
     GITEA__service__DISABLE_REGISTRATION,
     smtp,
-  } = (await storeJson.read().const(effects))!
+  } = store
 
   let smtpCredentials: T.SmtpValue | null = null
 
@@ -54,6 +61,18 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     ...(mailer || {}),
   }
 
+  const subcontainer = await sdk.SubContainer.of(
+    effects,
+    { imageId: 'gitea' },
+    sdk.Mounts.of().mountVolume({
+      volumeId: 'main',
+      subpath: null,
+      mountpoint: '/data',
+      readonly: false,
+    }),
+    'gitea-sub',
+  )
+
   /**
    * ======================== Daemons ========================
    *
@@ -61,66 +80,61 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    *
    * Each daemon defines its own health check, which can optionally be exposed to the user.
    */
-  const baseDaemons = sdk.Daemons.of(effects, started).addDaemon('primary', {
-    subcontainer: await sdk.SubContainer.of(
-      effects,
-      { imageId: 'gitea' },
-      sdk.Mounts.of().mountVolume({
-        volumeId: 'main',
-        subpath: null,
-        mountpoint: '/data',
-        readonly: false,
-      }),
-      'gitea-sub',
-    ),
-    exec: {
-      command: ['/usr/bin/entrypoint', '--', '/usr/bin/s6-svscan', '/etc/s6'],
-      env,
-    },
-    ready: {
-      display: null,
-      fn: () =>
-        sdk.healthCheck.checkPortListening(effects, uiPort, {
-          successMessage: 'Gitea is ready',
-          errorMessage:
-            'Gitea is experiencing an issue. Please check the logs.',
-        }),
-    },
-    requires: [],
-  })
-
-  const withRegistrationWarning = !GITEA__service__DISABLE_REGISTRATION
-    ? baseDaemons.addHealthCheck('registration-warning', {
-        ready: {
-          display: 'Registration is enabled',
-          gracePeriod: 0,
-          fn: async () => ({
-            result: 'failure',
-            message:
-              'For security purposes, user account registration should be disabled when not in use. You can disable it in the Gitea actions menu.',
-          }),
+  return sdk.Daemons.of(effects, started)
+    .addDaemon('primary', {
+      subcontainer,
+      exec: {
+        command: sdk.useEntrypoint(),
+        env,
+      },
+      ready: {
+        display: 'Web Interface',
+        gracePeriod: 60000,
+        fn: () =>
+          sdk.healthCheck.checkWebUrl(
+            effects,
+            `http://gitea.startos:${uiPort}/api/healthz`,
+            {
+              successMessage: 'Gitea is ready',
+              errorMessage:
+                'Gitea is still starting. If this persists, please check the logs.',
+            },
+          ),
+      },
+      requires: [],
+    })
+    .addOneshot('admin-user', {
+      subcontainer,
+      exec: {
+        fn: async () => {
+          const res = await subcontainer.execFail(
+            [
+              'gitea',
+              'admin',
+              'user',
+              'list',
+              '--admin',
+              '--work-path',
+              '/data',
+            ],
+            {
+              user: 'git',
+              env: {
+                HOME: '/data/git',
+              },
+            },
+          )
+          const lines = (res.stdout as string).trim().split('\n')
+          if (lines.length <= 1) {
+            await sdk.action.createOwnTask(effects, createAdmin, 'important', {
+              reason: 'Create your first admin user and password',
+            })
+          }
+          return null
         },
-        requires: [],
-      })
-    : baseDaemons
-
-  return withRegistrationWarning.addHealthCheck('web-interface', {
-    ready: {
-      display: 'Web Interface',
-      gracePeriod: 60000,
-      fn: () =>
-        sdk.healthCheck.checkWebUrl(
-          effects,
-          `http://gitea.startos:${uiPort}/api/healthz`,
-          {
-            successMessage: 'Gitea is ready',
-            errorMessage:
-              'Gitea is still starting. If this persists, please check the logs.',
-          },
-        ),
-    },
-    requires: ['primary'],
-  })
+      },
+      requires: ['primary'],
+    })
 })
 
 type GiteaEnv = GiteaMailer & {

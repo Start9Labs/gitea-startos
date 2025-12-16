@@ -3,14 +3,13 @@ import {
   IMPOSSIBLE,
   FileHelper,
   matches,
-  utils,
 } from '@start9labs/start-sdk'
 import { readFile, rm } from 'fs/promises'
-import { getHttpInterfaceUrls } from '../../utils'
+import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 
-export const v1_25_2_1 = VersionInfo.of({
-  version: '1.25.2:1-alpha.0',
+export const v1_25_2_2_a1 = VersionInfo.of({
+  version: '1.25.2:2-alpha.1',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
@@ -36,6 +35,8 @@ export const v1_25_2_1 = VersionInfo.of({
         .read()
         .once()
 
+      if (!legacyConfig) return
+
       // Read legacy secret key if it exists, otherwise generate a new one
       let secretKey: string
       try {
@@ -43,12 +44,9 @@ export const v1_25_2_1 = VersionInfo.of({
           '/media/startos/volumes/main/start9/secret-key.txt',
           'base64',
         )
-      } catch {
-        // Generate a new secret key if the legacy one doesn't exist
-        secretKey = utils.getDefaultString({
-          charset: 'A-Z,a-z,0-9,+,/',
-          len: 32,
-        })
+      } catch (e) {
+        console.error('Legacy secret not found, creating one')
+        secretKey = getSecretKey()
       }
 
       const urls = await getHttpInterfaceUrls(effects)
@@ -58,12 +56,12 @@ export const v1_25_2_1 = VersionInfo.of({
         GITEA__security__SECRET_KEY: secretKey,
         GITEA__server__ROOT_URL:
           urls.find((u) =>
-            legacyConfig?.['local-mode']
+            legacyConfig['local-mode']
               ? u.includes('.local')
               : u.startsWith('http:') && u.includes('.onion'),
           ) || '',
         GITEA__service__DISABLE_REGISTRATION: true,
-        smtp: legacyConfig?.['email-notifications']
+        smtp: legacyConfig['email-notifications']
           ? {
               selection: 'custom',
               value: {
@@ -82,9 +80,9 @@ export const v1_25_2_1 = VersionInfo.of({
       })
 
       // Clean up legacy folder
-      await rm('/media/startos/volumes/main/start9', { recursive: true }).catch(
-        console.error,
-      )
+      await rm('/media/startos/volumes/main/start9', {
+        recursive: true,
+      }).catch(console.error)
     },
     down: IMPOSSIBLE,
   },

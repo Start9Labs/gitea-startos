@@ -1,10 +1,10 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
-import { uiPort } from './utils'
+import { mount, uiPort } from './utils'
 import { storeJson } from './fileModels/store.json'
 import { createAdmin } from './actions/createAdmin'
 
-export const main = sdk.setupMain(async ({ effects, started }) => {
+export const main = sdk.setupMain(async ({ effects }) => {
   /**
    * ======================== Setup (optional) ========================
    *
@@ -64,12 +64,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const subcontainer = await sdk.SubContainer.of(
     effects,
     { imageId: 'gitea' },
-    sdk.Mounts.of().mountVolume({
-      volumeId: 'main',
-      subpath: null,
-      mountpoint: '/data',
-      readonly: false,
-    }),
+    mount,
     'gitea-sub',
   )
 
@@ -80,7 +75,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    *
    * Each daemon defines its own health check, which can optionally be exposed to the user.
    */
-  return sdk.Daemons.of(effects, started)
+  return sdk.Daemons.of(effects)
     .addDaemon('primary', {
       subcontainer,
       exec: {
@@ -117,6 +112,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
               '--work-path',
               '/data',
             ],
+            // @TODO confirm user and HOME still needed for alpha.16
             {
               user: 'git',
               env: {

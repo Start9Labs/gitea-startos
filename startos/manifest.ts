@@ -15,8 +15,7 @@ export const manifest = setupManifest({
   supportSite: 'https://github.com/go-gitea/gitea/issues',
   marketingSite: 'https://gitea.com/',
   donationUrl: null,
-  docsUrl:
-    'https://docs.gitea.io/',
+  docsUrl: 'https://docs.gitea.io/',
   description: {
     short: 'A painless self-hosted Git service',
     long: 'Gitea is a community managed lightweight code hosting solution written in Go. It is published under the MIT license',
@@ -27,10 +26,10 @@ export const manifest = setupManifest({
       source: {
         dockerTag: 'gitea/gitea:1.25.2',
       },
-      arch: architectures
+      arch: architectures,
     } as SDKImageInputSpec,
   },
-  hardwareRequirements: { arch: architectures},
+  hardwareRequirements: { arch: architectures },
   alerts: {
     install: null,
     update: null,

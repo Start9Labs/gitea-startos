@@ -71,9 +71,6 @@ export const createAdmin = sdk.Action.withInput(
           ],
           {
             user: 'git',
-            env: {
-              HOME: '/data/git',
-            },
           },
         )
         return execResult

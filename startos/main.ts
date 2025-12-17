@@ -84,7 +84,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       },
       ready: {
         display: 'Web Interface',
-        gracePeriod: 60000,
+        gracePeriod: 120000,
         fn: () =>
           sdk.healthCheck.checkWebUrl(
             effects,
@@ -112,12 +112,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
               '--work-path',
               '/data',
             ],
-            // @TODO confirm user and HOME still needed for alpha.16
             {
               user: 'git',
-              env: {
-                HOME: '/data/git',
-              },
             },
           )
           const lines = (res.stdout as string).trim().split('\n')

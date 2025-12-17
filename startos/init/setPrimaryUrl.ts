@@ -9,10 +9,6 @@ export const setPrimaryUrl = sdk.setupOnInit(async (effects) => {
     .read((s) => s.GITEA__server__ROOT_URL)
     .const(effects)
 
-  // @TODO delete logs once confirmed no edge case bugs
-  console.log('** ROOT URL **', rootUrl)
-  console.log('** URLS **', httpUrls)
-
   if (!rootUrl || !httpUrls.includes(rootUrl)) {
     await storeJson.merge(
       effects,

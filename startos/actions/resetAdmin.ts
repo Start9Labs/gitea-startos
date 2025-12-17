@@ -12,19 +12,8 @@ export const inputSpec = InputSpec.of({
       'list-admin-users',
       async (subc) => {
         const execResult = await subc.execFail(
-          [
-            'su',
-            '-s',
-            '/bin/sh',
-            'git',
-            '-c',
-            `gitea admin user list --admin --work-path /data`,
-          ],
-          {
-            env: {
-              GITEA_WORK_DIR: '/data',
-            },
-          },
+          ['gitea', 'admin', 'user', 'list', '--admin', '--work-path', '/data'],
+          { user: 'git' },
         )
         return execResult
       },
@@ -85,17 +74,20 @@ export const resetAdmin = sdk.Action.withInput(
       async (subc) => {
         const execResult = await subc.exec(
           [
-            'su',
-            '-s',
-            '/bin/sh',
-            'git',
-            '-c',
-            `gitea admin user change-password --username "${input.username}" --password "${password}" --must-change-password=false --work-path /data`,
+            'gitea',
+            'admin',
+            'user',
+            'change-password',
+            '--username',
+            input.username,
+            '--password',
+            password,
+            '--must-change-password=false',
+            '--work-path',
+            '/data',
           ],
           {
-            env: {
-              GITEA_WORK_DIR: '/data',
-            },
+            user: 'git',
           },
         )
         return execResult

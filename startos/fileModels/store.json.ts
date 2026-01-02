@@ -14,6 +14,9 @@ const shape = object({
 })
 
 export const storeJson = FileHelper.json(
-  { volumeId: 'main', subpath: './store.json' },
+  {
+    base: sdk.volumes.main,
+    subpath: './store.json'
+  },
   shape,
 )

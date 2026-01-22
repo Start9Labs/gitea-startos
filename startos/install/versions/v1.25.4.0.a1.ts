@@ -9,8 +9,8 @@ import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { sdk } from '../../sdk'
 
-export const v1_25_2_2_a1 = VersionInfo.of({
-  version: '1.25.2:2-alpha.1',
+export const v1_25_4_0_a1 = VersionInfo.of({
+  version: '1.25.4:0-alpha.1',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
@@ -64,20 +64,20 @@ export const v1_25_2_2_a1 = VersionInfo.of({
         GITEA__service__DISABLE_REGISTRATION: true,
         smtp: legacyConfig['email-notifications']
           ? {
-              selection: 'custom',
-              value: {
-                server: legacyConfig['email-notifications']['smtp-host'] || '',
-                port: legacyConfig['email-notifications']['smtp-port'] || 587,
-                from: legacyConfig['email-notifications']['from-name'] || '',
-                login: legacyConfig['email-notifications']['smtp-user'] || '',
-                password:
-                  legacyConfig['email-notifications']['smtp-pass'] || '',
-              },
-            }
-          : {
-              selection: 'disabled',
-              value: {},
+            selection: 'custom',
+            value: {
+              server: legacyConfig['email-notifications']['smtp-host'] || '',
+              port: legacyConfig['email-notifications']['smtp-port'] || 587,
+              from: legacyConfig['email-notifications']['from-name'] || '',
+              login: legacyConfig['email-notifications']['smtp-user'] || '',
+              password:
+                legacyConfig['email-notifications']['smtp-pass'] || '',
             },
+          }
+          : {
+            selection: 'disabled',
+            value: {},
+          },
       })
 
       // Clean up legacy folder

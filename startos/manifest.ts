@@ -18,7 +18,7 @@ export const manifest = setupManifest({
   images: {
     gitea: {
       source: {
-        dockerTag: 'gitea/gitea:1.25.2',
+        dockerTag: 'gitea/gitea:1.25.4',
       },
     }
   },

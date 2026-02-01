@@ -30,10 +30,7 @@ export const mount = sdk.Mounts.of().mountVolume({
 export async function getHttpInterfaceUrls(
   effects: Effects,
 ): Promise<string[]> {
-  // @TODO use map fn when available
-  const httpInterface = await sdk.serviceInterface
-    .getOwn(effects, httpInterfaceId)
+  return sdk.serviceInterface
+    .getOwn(effects, httpInterfaceId, (i) => i?.addressInfo?.nonLocal.format() || [])
     .const()
-
-  return httpInterface?.addressInfo?.nonLocal.format() || []
 }

@@ -1,4 +1,5 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import { short, long } from './i18n'
 
 export const manifest = setupManifest({
   id: 'gitea',
@@ -10,26 +11,14 @@ export const manifest = setupManifest({
   marketingSite: 'https://gitea.com/',
   donationUrl: null,
   docsUrl: 'https://docs.gitea.io/',
-  description: {
-    short: 'A painless self-hosted Git service',
-    long: 'Gitea is a community managed lightweight code hosting solution written in Go. It is published under the MIT license',
-  },
+  description: { short, long },
   volumes: ['main'],
   images: {
     gitea: {
       source: {
-        dockerTag: 'gitea/gitea:1.25.2',
+        dockerTag: 'gitea/gitea:1.25.4',
       },
     }
-  },
-  hardwareRequirements: {},
-  alerts: {
-    install: null,
-    update: null,
-    uninstall: null,
-    restore: null,
-    start: null,
-    stop: null,
   },
   dependencies: {},
 })

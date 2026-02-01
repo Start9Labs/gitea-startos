@@ -1,4 +1,5 @@
 import { storeJson } from '../fileModels/store.json'
+import { i18n } from '../i18n'
 import { sdk } from '../sdk'
 
 export const registrations = sdk.Action.withoutInput(
@@ -12,12 +13,20 @@ export const registrations = sdk.Action.withoutInput(
       .const(effects)
 
     return {
-      name: disabled ? 'Enable Registrations' : 'Disable Registrations',
+      name: disabled
+        ? i18n('Enable Registrations')
+        : i18n('Disable Registrations'),
       description: disabled
-        ? 'Registrations are currently disabled. Run this action to permit new registrations.'
-        : 'Registrations are currently enabled. Run this action to prohibit new registrations.',
+        ? i18n(
+            'Registrations are currently disabled. Run this action to permit new registrations.',
+          )
+        : i18n(
+            'Registrations are currently enabled. Run this action to prohibit new registrations.',
+          ),
       warning: disabled
-        ? 'Anyone with your Gitea URL will be able to create an account on your server, which represents a security risk. Be careful!'
+        ? i18n(
+            'Anyone with your Gitea URL will be able to create an account on your server, which represents a security risk. Be careful!',
+          )
         : null,
       allowedStatuses: 'any',
       group: null,

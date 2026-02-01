@@ -1,4 +1,5 @@
 import { storeJson } from '../fileModels/store.json'
+import { i18n } from '../i18n'
 import { sdk } from '../sdk'
 import { getHttpInterfaceUrls } from '../utils'
 
@@ -9,7 +10,7 @@ export const inputSpec = InputSpec.of({
     const systemUrls = await getHttpInterfaceUrls(effects)
 
     return {
-      name: 'URL',
+      name: i18n('URL'),
       values: systemUrls.reduce(
         (obj, url) => ({
           ...obj,
@@ -28,9 +29,10 @@ export const setPrimaryUrl = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Set Primary Url',
-    description:
+    name: i18n('Set Primary Url'),
+    description: i18n(
       'Choose which of your Gitea http URLs should serve as the primary URL for the purposes of creating links, sending invites, etc.',
+    ),
     warning: null,
     allowedStatuses: 'any',
     group: null,

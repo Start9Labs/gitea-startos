@@ -1,3 +1,4 @@
+import { i18n } from '../i18n'
 import { sdk } from '../sdk'
 import { getPassword, mount } from '../utils'
 
@@ -27,7 +28,7 @@ export const inputSpec = InputSpec.of({
     const admins = dataLines.map((line) => line.trim().split(/\s+/)[1]) // split on whitespace
 
     return {
-      name: 'Admin User',
+      name: i18n('Admin User'),
       default: admins[0],
       values: admins.reduce(
         (obj, name) => ({
@@ -47,8 +48,8 @@ export const resetAdmin = sdk.Action.withInput(
   // metadata
   async ({ effects }) => {
     return {
-      name: 'Reset Admin Password',
-      description: 'Generate a new password for an admin user',
+      name: i18n('Reset Admin Password'),
+      description: i18n('Generate a new password for an admin user'),
       warning: null,
       allowedStatuses: 'only-running',
       group: null,
@@ -105,14 +106,14 @@ export const resetAdmin = sdk.Action.withInput(
     // Show the generated password
     return {
       version: '1',
-      title: 'Success',
-      message: 'Your admin user password has been reset',
+      title: i18n('Success'),
+      message: i18n('Your admin user password has been reset'),
       result: {
         type: 'group',
         value: [
           {
             type: 'single',
-            name: 'Username',
+            name: i18n('Username'),
             description: null,
             value: input.username,
             masked: false,
@@ -121,7 +122,7 @@ export const resetAdmin = sdk.Action.withInput(
           },
           {
             type: 'single',
-            name: 'Password',
+            name: i18n('Password'),
             description: null,
             value: password,
             masked: true,

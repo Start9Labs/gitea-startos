@@ -3,6 +3,7 @@ import { T } from '@start9labs/start-sdk'
 import { mount, uiPort } from './utils'
 import { storeJson } from './fileModels/store.json'
 import { createAdmin } from './actions/createAdmin'
+import { i18n } from './i18n'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
@@ -10,12 +11,12 @@ export const main = sdk.setupMain(async ({ effects }) => {
    *
    * In this section, we fetch any resources or run any desired preliminary commands.
    */
-  console.info('[i] Starting Gitea!')
+  console.info(i18n('Starting Gitea!'))
 
   const store = await storeJson.read().const(effects)
 
   if (!store) {
-    throw new Error('Store not found')
+    throw new Error(i18n('Store not found'))
   }
 
   const {
@@ -83,16 +84,17 @@ export const main = sdk.setupMain(async ({ effects }) => {
         env,
       },
       ready: {
-        display: 'Web Interface',
+        display: i18n('Web Interface'),
         gracePeriod: 120000,
         fn: () =>
           sdk.healthCheck.checkWebUrl(
             effects,
             `http://gitea.startos:${uiPort}/api/healthz`,
             {
-              successMessage: 'Gitea is ready',
-              errorMessage:
+              successMessage: i18n('Gitea is ready'),
+              errorMessage: i18n(
                 'Gitea is still starting. If this persists, please check the logs.',
+              ),
             },
           ),
       },
@@ -119,7 +121,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
           const lines = (res.stdout as string).trim().split('\n')
           if (lines.length <= 1) {
             await sdk.action.createOwnTask(effects, createAdmin, 'important', {
-              reason: 'Create your first admin user and password',
+              reason: i18n('Create your first admin user and password'),
             })
           }
           return null

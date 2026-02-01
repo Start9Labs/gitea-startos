@@ -7,16 +7,23 @@ import {
 import { readFile, rm } from 'fs/promises'
 import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
+import { sdk } from '../../sdk'
 
-export const v1_25_2_2_a1 = VersionInfo.of({
-  version: '1.25.2:2-alpha.1',
-  releaseNotes: 'Revamped for StartOS 0.4.0',
+export const v1_25_4_0_b0 = VersionInfo.of({
+  version: '1.25.4:0-beta.0',
+  releaseNotes: {
+    en_US: 'Revamped for StartOS 0.4.0',
+    es_ES: 'Renovado para StartOS 0.4.0',
+    de_DE: 'Überarbeitet für StartOS 0.4.0',
+    pl_PL: 'Przebudowano dla StartOS 0.4.0',
+    fr_FR: 'Remanié pour StartOS 0.4.0',
+  },
   migrations: {
     up: async ({ effects }) => {
       // Read legacy config from start9/config.yaml
       const legacyConfig = await FileHelper.yaml(
         {
-          volumeId: 'main',
+          base: sdk.volumes.main,
           subpath: 'start9/config.yaml',
         },
         matches.object({

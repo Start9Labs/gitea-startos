@@ -6,7 +6,7 @@
 
 > **Upstream docs:** <https://docs.gitea.io/>
 >
-> Everything not listed in this document behaves identically to upstream Gitea 1.25.4. If a feature, setting, or behavior is not mentioned here, the upstream documentation is accurate and fully applicable.
+> Everything not listed in this document behaves identically to upstream Gitea. If a feature, setting, or behavior is not mentioned here, the upstream documentation is accurate and fully applicable.
 
 [Gitea](https://github.com/go-gitea/gitea) is a community managed lightweight code hosting solution written in Go. This repository packages Gitea for [StartOS](https://github.com/Start9Labs/start-os/).
 
@@ -33,7 +33,7 @@
 
 | Aspect | Standard Docker/Compose | StartOS |
 |---|---|---|
-| Image | `gitea/gitea:1.25.4` | Same image: `gitea/gitea:1.25.4` |
+| Image | `gitea/gitea` (upstream) | Same image, unmodified |
 | Architectures | Depends on host | x86_64, aarch64, riscv64 |
 | Container orchestration | Docker / Docker Compose | StartOS SDK (`SubContainer`) — no user-facing `docker-compose.yml` |
 | Entrypoint | Default Gitea entrypoint | Same (via `sdk.useEntrypoint()`) |
@@ -274,8 +274,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development wo
 
 ```yaml
 package_id: gitea
-upstream_version: 1.25.4
-image: gitea/gitea:1.25.4  # unmodified upstream
+image: gitea/gitea  # unmodified upstream
 architectures: [x86_64, aarch64, riscv64]
 volumes:
   main: /data  # single volume, contains everything

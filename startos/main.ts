@@ -30,10 +30,10 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
   if (smtp.selection === 'system') {
     smtpCredentials = await sdk.getSystemSmtp(effects).const()
-    if (smtpCredentials && smtp.value.customFrom)
-      smtpCredentials.from = smtp.value.customFrom
+    const customFrom = smtp.value.customFrom as string | undefined
+    if (smtpCredentials && customFrom) smtpCredentials.from = customFrom
   } else if (smtp.selection === 'custom') {
-    smtpCredentials = smtp.value
+    smtpCredentials = smtp.value as unknown as T.SmtpValue
   }
 
   let mailer: GiteaMailer = {
@@ -42,10 +42,10 @@ export const main = sdk.setupMain(async ({ effects }) => {
   if (smtpCredentials) {
     mailer = {
       GITEA__mailer__ENABLED: 'true',
-      GITEA__mailer__SMTP_ADDR: smtpCredentials.server,
+      GITEA__mailer__SMTP_ADDR: smtpCredentials.host,
       GITEA__mailer__SMTP_PORT: String(smtpCredentials.port),
       GITEA__mailer__FROM: smtpCredentials.from,
-      GITEA__mailer__USER: smtpCredentials.login,
+      GITEA__mailer__USER: smtpCredentials.username,
     }
     if (smtpCredentials.password)
       mailer.GITEA__mailer__PASSWD = smtpCredentials.password

@@ -1,16 +1,11 @@
-import {
-  VersionInfo,
-  IMPOSSIBLE,
-  FileHelper,
-  matches,
-} from '@start9labs/start-sdk'
+import { VersionInfo, IMPOSSIBLE, FileHelper, z } from '@start9labs/start-sdk'
 import { readFile, rm } from 'fs/promises'
 import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { sdk } from '../../sdk'
 
-export const v1_25_4_0_b0 = VersionInfo.of({
-  version: '1.25.4:0-beta.0',
+export const v1_25_4_1_b0 = VersionInfo.of({
+  version: '1.25.4:1-beta.0',
   releaseNotes: {
     en_US: 'Revamped for StartOS 0.4.0',
     es_ES: 'Renovado para StartOS 0.4.0',
@@ -26,18 +21,20 @@ export const v1_25_4_0_b0 = VersionInfo.of({
           base: sdk.volumes.main,
           subpath: 'start9/config.yaml',
         },
-        matches.object({
-          'email-notifications': matches
-            .object({
-              'smtp-host': matches.string.optional(),
-              'smtp-port': matches.number.optional(),
-              'smtp-user': matches.string.optional(),
-              'smtp-pass': matches.string.optional(),
-              'from-name': matches.string.optional(),
-            })
-            .optional(),
-          'local-mode': matches.boolean.optional(),
-        }),
+        z
+          .object({
+            'email-notifications': z
+              .object({
+                'smtp-host': z.string().optional(),
+                'smtp-port': z.number().optional(),
+                'smtp-user': z.string().optional(),
+                'smtp-pass': z.string().optional(),
+                'from-name': z.string().optional(),
+              })
+              .optional(),
+            'local-mode': z.boolean().optional(),
+          })
+          .strip(),
       )
         .read()
         .once()
@@ -70,7 +67,7 @@ export const v1_25_4_0_b0 = VersionInfo.of({
         GITEA__service__DISABLE_REGISTRATION: true,
         smtp: legacyConfig['email-notifications']
           ? {
-              selection: 'custom',
+              selection: 'custom' as const,
               value: {
                 server: legacyConfig['email-notifications']['smtp-host'] || '',
                 port: legacyConfig['email-notifications']['smtp-port'] || 587,
@@ -81,7 +78,7 @@ export const v1_25_4_0_b0 = VersionInfo.of({
               },
             }
           : {
-              selection: 'disabled',
+              selection: 'disabled' as const,
               value: {},
             },
       })

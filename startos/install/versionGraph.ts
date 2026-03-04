@@ -1,20 +1,7 @@
 import { VersionGraph } from '@start9labs/start-sdk'
-import { storeJson } from '../fileModels/store.json'
 import { current, other } from './versions'
-import { getSecretKey } from '../utils'
 
 export const versionGraph = VersionGraph.of({
   current,
   other,
-  preInstall: async (effects) => {
-    await storeJson.write(effects, {
-      GITEA__security__SECRET_KEY: getSecretKey(),
-      GITEA__server__ROOT_URL: '',
-      GITEA__service__DISABLE_REGISTRATION: true,
-      smtp: {
-        selection: 'disabled',
-        value: {},
-      },
-    })
-  },
 })

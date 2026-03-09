@@ -1,5 +1,5 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { short, long } from './i18n'
+import { long, short } from './i18n'
 
 export const manifest = setupManifest({
   id: 'gitea',
@@ -9,7 +9,7 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/go-gitea/gitea',
   marketingUrl: 'https://gitea.com/',
   donationUrl: null,
-  docsUrls: ['https://docs.gitea.io/'],
+  docsUrls: ['https://docs.gitea.com'],
   description: { short, long },
   volumes: ['main'],
   images: {

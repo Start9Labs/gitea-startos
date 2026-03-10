@@ -4,7 +4,7 @@
 
 # Gitea on StartOS
 
-> **Upstream docs:** <https://docs.gitea.io/>
+> **Upstream docs:** <https://gitea.com/gitea/docs>
 >
 > Everything not listed in this document behaves identically to upstream Gitea. If a feature, setting, or behavior is not mentioned here, the upstream documentation is accurate and fully applicable.
 
@@ -244,7 +244,7 @@ The `gitea dump` command is not used. StartOS backs up the raw volume contents.
 
 ## What Is Unchanged from Upstream
 
-Everything not listed above works exactly as documented at <https://docs.gitea.io/>. This includes but is not limited to:
+Everything not listed above works exactly as documented at <https://gitea.com/gitea/docs>. This includes but is not limited to:
 
 - Repository management (create, fork, mirror, archive, transfer)
 - Git operations (push, pull, fetch, LFS)

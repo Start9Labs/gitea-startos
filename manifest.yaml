@@ -1,10 +1,15 @@
 id: gitea
 title: "Gitea"
-version: 1.23.7
+version: 1.25.5
 release-notes: |
-  * Upstream code update
-  * Many bug fixes and improvements
-  * Full list of upstream changes available [here](https://github.com/go-gitea/gitea/compare/v1.22.6...v1.23.7)
+  * Upstream update from 1.23.7 to 1.25.5 (2 minor versions)
+  * Security patches: LFS auth bypass, symlink bypass, OAuth2 fixes, path traversal fixes
+  * New: enforced 2FA, file tree sidebar, material icons, sub-issues
+  * New: streaming repo archives, 3D/CAD file preview, edit-file fork-and-propose
+  * New: Actions Runner REST API, anonymous access for private repos, branch rename API
+  * Refactored OpenID Connect support
+  * Base image upgraded to Alpine 3.22, Go 1.25
+  * Full list of upstream changes available [here](https://github.com/go-gitea/gitea/compare/v1.23.7...v1.25.5)
 license: MIT
 wrapper-repo: "https://github.com/Start9Labs/gitea-startos"
 upstream-repo: "https://github.com/go-gitea/gitea"

@@ -4,14 +4,10 @@ import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { sdk } from '../../sdk'
 
-export const v_1_25_4_2_b0 = VersionInfo.of({
-  version: '1.25.4:2-beta.0',
+export const v_1_25_5_0_b0 = VersionInfo.of({
+  version: '1.25.5:0-beta.0',
   releaseNotes: {
-    en_US: 'Update to StartOS SDK beta.59',
-    es_ES: 'Actualización a StartOS SDK beta.59',
-    de_DE: 'Update auf StartOS SDK beta.59',
-    pl_PL: 'Aktualizacja do StartOS SDK beta.59',
-    fr_FR: 'Mise à jour vers StartOS SDK beta.59',
+    en_US: 'Update Gitea to 1.25.5',
   },
   migrations: {
     up: async ({ effects }) => {

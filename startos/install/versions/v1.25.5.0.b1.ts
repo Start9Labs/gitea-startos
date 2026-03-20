@@ -4,8 +4,8 @@ import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { sdk } from '../../sdk'
 
-export const v_1_25_5_0_b0 = VersionInfo.of({
-  version: '1.25.5:0-beta.0',
+export const v_1_25_5_0_b1 = VersionInfo.of({
+  version: '1.25.5:0-beta.1',
   releaseNotes: {
     en_US: 'Update Gitea to 1.25.5',
   },

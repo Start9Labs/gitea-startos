@@ -4,8 +4,8 @@ import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { sdk } from '../../sdk'
 
-export const v_1_25_5_0_b1 = VersionInfo.of({
-  version: '1.25.5:0-beta.1',
+export const v_1_25_5_0_b2 = VersionInfo.of({
+  version: '1.25.5:0-beta.2',
   releaseNotes: {
     en_US: 'Update Gitea to 1.25.5',
   },
@@ -65,12 +65,31 @@ export const v_1_25_5_0_b1 = VersionInfo.of({
           ? {
               selection: 'custom' as const,
               value: {
-                server: legacyConfig['email-notifications']['smtp-host'] || '',
-                port: legacyConfig['email-notifications']['smtp-port'] || 587,
-                from: legacyConfig['email-notifications']['from-name'] || '',
-                login: legacyConfig['email-notifications']['smtp-user'] || '',
-                password:
-                  legacyConfig['email-notifications']['smtp-pass'] || '',
+                provider: {
+                  selection: 'other',
+                  value: {
+                    host:
+                      legacyConfig['email-notifications']['smtp-host'] || '',
+                    from:
+                      legacyConfig['email-notifications']['from-name'] || '',
+                    username:
+                      legacyConfig['email-notifications']['smtp-user'] || '',
+                    password:
+                      legacyConfig['email-notifications']['smtp-pass'] || '',
+                    security: {
+                      selection:
+                        legacyConfig['email-notifications']['smtp-port'] === 465
+                          ? ('tls' as const)
+                          : ('starttls' as const),
+                      value: {
+                        port: String(
+                          legacyConfig['email-notifications']['smtp-port'] ||
+                            587,
+                        ),
+                      },
+                    },
+                  },
+                },
               },
             }
           : {

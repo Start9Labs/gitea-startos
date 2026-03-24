@@ -1,11 +1,11 @@
 import { VersionInfo, IMPOSSIBLE, FileHelper, z } from '@start9labs/start-sdk'
 import { readFile, rm } from 'fs/promises'
-import { getHttpInterfaceUrls, getSecretKey } from '../../utils'
-import { storeJson } from '../../fileModels/store.json'
-import { sdk } from '../../sdk'
+import { getHttpInterfaceUrls, getSecretKey } from '../utils'
+import { storeJson } from '../fileModels/store.json'
+import { sdk } from '../sdk'
 
-export const v_1_25_5_0_b2 = VersionInfo.of({
-  version: '1.25.5:0-beta.2',
+export const v_1_25_5_0_b3 = VersionInfo.of({
+  version: '1.25.5:0-beta.3',
   releaseNotes: {
     en_US: 'Update Gitea to 1.25.5',
   },

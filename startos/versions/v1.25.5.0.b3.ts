@@ -52,7 +52,7 @@ export const v_1_25_5_0_b3 = VersionInfo.of({
       const urls = await getHttpInterfaceUrls(effects)
 
       // initialize the store
-      await storeJson.write(effects, {
+      await storeJson.merge(effects, {
         GITEA__security__SECRET_KEY: secretKey,
         GITEA__server__ROOT_URL:
           urls.find((u) =>

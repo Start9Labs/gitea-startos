@@ -5,7 +5,7 @@ export const manifest = setupManifest({
   id: 'gitea',
   title: 'Gitea',
   license: 'MIT',
-  packageRepo: 'https://github.com/Start9Labs/gitea-startos/tree/update/040',
+  packageRepo: 'https://github.com/Start9Labs/gitea-startos',
   upstreamRepo: 'https://github.com/go-gitea/gitea',
   marketingUrl: 'https://gitea.com/',
   donationUrl: null,

@@ -23,9 +23,11 @@
 - [SMTP / Email](#smtp--email)
 - [Backups and Restore](#backups-and-restore)
 - [Health Checks](#health-checks)
+- [Dependencies](#dependencies)
 - [Limitations and Differences](#limitations-and-differences)
 - [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
 - [Contributing](#contributing)
+- [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
@@ -233,6 +235,12 @@ The `gitea dump` command is not used. StartOS backs up the raw volume contents.
 
 ---
 
+## Dependencies
+
+None. Gitea runs with an embedded SQLite database and has no external service dependencies.
+
+---
+
 ## Limitations and Differences
 
 1. **No web-based installation wizard** — setup is fully automated by StartOS.
@@ -274,19 +282,14 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development wo
 
 ```yaml
 package_id: gitea
-image: gitea/gitea  # unmodified upstream
+image: gitea/gitea
 architectures: [x86_64, aarch64, riscv64]
 volumes:
-  main: /data  # single volume, contains everything
+  main: /data
 ports:
-  http: 3000   # web UI + git HTTP
-  ssh: 22      # git SSH
+  http: 3000
+  ssh: 22
 dependencies: none
-database: SQLite (embedded, no external DB)
-install_lock: always true (no setup wizard)
-registration: disabled by default
-backup: full /data volume snapshot
-health_check: GET /api/healthz (120s grace)
 startos_managed_env_vars:
   - GITEA__server__ROOT_URL
   - GITEA__security__INSTALL_LOCK
@@ -300,9 +303,9 @@ startos_managed_env_vars:
   - GITEA__mailer__USER
   - GITEA__mailer__PASSWD
 actions:
-  - create-admin     # hidden, auto-triggered on first run
-  - reset-admin      # visible, requires running service
-  - set-primary-url  # visible, any status
-  - registrations    # visible, any status (toggle)
-  - manage-smtp      # visible, any status
+  - create-admin
+  - reset-admin
+  - set-primary-url
+  - registrations
+  - manage-smtp
 ```

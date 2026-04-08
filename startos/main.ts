@@ -51,9 +51,12 @@ export const main = sdk.setupMain(async ({ effects }) => {
       mailer.GITEA__mailer__PASSWD = smtpCredentials.password
   }
 
+  const sshDomain = new URL(GITEA__server__ROOT_URL).hostname
+
   const env: GiteaEnv = {
     GITEA__lfs__PATH: '/data/git/lfs',
     GITEA__server__ROOT_URL,
+    GITEA__server__SSH_DOMAIN: sshDomain,
     GITEA__service__DISABLE_REGISTRATION: String(
       GITEA__service__DISABLE_REGISTRATION,
     ),
@@ -134,6 +137,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
 type GiteaEnv = GiteaMailer & {
   GITEA__lfs__PATH: '/data/git/lfs'
   GITEA__server__ROOT_URL: string
+  GITEA__server__SSH_DOMAIN: string
   GITEA__security__INSTALL_LOCK: 'true'
   GITEA__security__SECRET_KEY: string
   GITEA__service__DISABLE_REGISTRATION: string

@@ -4,14 +4,14 @@ import { getHttpInterfaceUrls, getSecretKey } from '../utils'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
-export const v_1_25_5_0 = VersionInfo.of({
-  version: '1.25.5:0',
+export const v_1_25_5_1 = VersionInfo.of({
+  version: '1.25.5:1',
   releaseNotes: {
-    en_US: 'Update Gitea to 1.25.5',
-    es_ES: 'Actualización de Gitea a 1.25.5',
-    de_DE: 'Update von Gitea auf 1.25.5',
-    pl_PL: 'Aktualizacja Gitea do 1.25.5',
-    fr_FR: 'Mise à jour de Gitea vers 1.25.5',
+    en_US: 'Fix SSH clone URL to match the configured primary URL',
+    es_ES: 'Corregir la URL de clonación SSH para que coincida con la URL principal configurada',
+    de_DE: 'SSH-Klon-URL korrigiert, damit sie mit der konfigurierten primären URL übereinstimmt',
+    pl_PL: 'Naprawiono URL klonowania SSH, aby pasował do skonfigurowanego głównego URL',
+    fr_FR: "Correction de l'URL de clonage SSH pour correspondre à l'URL principale configurée",
   },
   migrations: {
     up: async ({ effects }) => {

@@ -1,9 +1,9 @@
-import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
-import { mount, uiPort } from './utils'
-import { storeJson } from './fileModels/store.json'
 import { createAdmin } from './actions/createAdmin'
+import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
+import { sdk } from './sdk'
+import { mount, uiPort } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
@@ -52,11 +52,20 @@ export const main = sdk.setupMain(async ({ effects }) => {
   }
 
   const sshDomain = new URL(GITEA__server__ROOT_URL).hostname
+  const sshPort = await sdk.serviceInterface
+    .getOwn(
+      effects,
+      'ssh',
+      (i) =>
+        i?.addressInfo?.filter({ kind: 'mdns' }).hostnames?.[0]?.port ?? null,
+    )
+    .once()
 
   const env: GiteaEnv = {
     GITEA__lfs__PATH: '/data/git/lfs',
     GITEA__server__ROOT_URL,
     GITEA__server__SSH_DOMAIN: sshDomain,
+    ...(sshPort ? { GITEA__server__SSH_PORT: String(sshPort) } : {}),
     GITEA__service__DISABLE_REGISTRATION: String(
       GITEA__service__DISABLE_REGISTRATION,
     ),
@@ -138,6 +147,7 @@ type GiteaEnv = GiteaMailer & {
   GITEA__lfs__PATH: '/data/git/lfs'
   GITEA__server__ROOT_URL: string
   GITEA__server__SSH_DOMAIN: string
+  GITEA__server__SSH_PORT?: string
   GITEA__security__INSTALL_LOCK: 'true'
   GITEA__security__SECRET_KEY: string
   GITEA__service__DISABLE_REGISTRATION: string

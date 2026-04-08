@@ -57,7 +57,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
       effects,
       'ssh',
       (i) =>
-        i?.addressInfo?.filter({ kind: 'mdns' }).hostnames?.[0]?.port ?? null,
+        i?.addressInfo?.filter({ exclude: { kind: 'plugin' } }).hostnames?.[0]
+          ?.port ?? null,
     )
     .once()
 

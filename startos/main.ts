@@ -33,7 +33,15 @@ export const main = sdk.setupMain(async ({ effects }) => {
     const customFrom = smtp.value.customFrom as string | undefined
     if (smtpCredentials && customFrom) smtpCredentials.from = customFrom
   } else if (smtp.selection === 'custom') {
-    smtpCredentials = smtp.value as unknown as T.SmtpValue
+    const p = smtp.value.provider.value
+    smtpCredentials = {
+      host: p.host,
+      port: Number(p.security.value.port),
+      from: p.from,
+      username: p.username,
+      password: p.password,
+      security: p.security.selection,
+    }
   }
 
   let mailer: GiteaMailer = {
@@ -42,6 +50,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
   if (smtpCredentials) {
     mailer = {
       GITEA__mailer__ENABLED: 'true',
+      GITEA__mailer__PROTOCOL:
+        smtpCredentials.security === 'tls' ? 'smtps' : 'smtp+starttls',
       GITEA__mailer__SMTP_ADDR: smtpCredentials.host,
       GITEA__mailer__SMTP_PORT: String(smtpCredentials.port),
       GITEA__mailer__FROM: smtpCredentials.from,
@@ -160,6 +170,7 @@ type GiteaMailer =
     }
   | {
       GITEA__mailer__ENABLED: 'true'
+      GITEA__mailer__PROTOCOL: 'smtps' | 'smtp+starttls'
       GITEA__mailer__SMTP_ADDR: string
       GITEA__mailer__SMTP_PORT: string
       GITEA__mailer__FROM: string

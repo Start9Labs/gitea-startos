@@ -9,7 +9,6 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/go-gitea/gitea',
   marketingUrl: 'https://gitea.com/',
   donationUrl: null,
-  docsUrls: ['https://gitea.com/gitea/docs'],
   description: { short, long },
   volumes: ['main'],
   images: {

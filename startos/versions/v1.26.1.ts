@@ -4,14 +4,29 @@ import { getHttpInterfaceUrls, getSecretKey } from '../utils'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
-export const v_1_25_5_3 = VersionInfo.of({
-  version: '1.25.5:3',
+export const v_1_26_1 = VersionInfo.of({
+  version: '1.26.1:1',
   releaseNotes: {
-    en_US: 'Internal updates (start-sdk 1.3.3)',
-    es_ES: 'Actualizaciones internas (start-sdk 1.3.3)',
-    de_DE: 'Interne Aktualisierungen (start-sdk 1.3.3)',
-    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 1.3.3)',
-    fr_FR: 'Mises à jour internes (start-sdk 1.3.3)',
+    en_US: `**Bumps**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0`,
+    es_ES: `**Cambios de versión**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0`,
+    de_DE: `**Versionssprünge**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0`,
+    pl_PL: `**Zmiany wersji**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0`,
+    fr_FR: `**Mises à niveau**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0`,
   },
   migrations: {
     up: async ({ effects }) => {

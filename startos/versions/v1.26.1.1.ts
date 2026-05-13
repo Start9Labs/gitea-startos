@@ -4,14 +4,49 @@ import { getHttpInterfaceUrls, getSecretKey } from '../utils'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
-export const v_1_25_5_3 = VersionInfo.of({
-  version: '1.25.5:3',
+export const v_1_26_1_1 = VersionInfo.of({
+  version: '1.26.1:1',
   releaseNotes: {
-    en_US: 'Internal updates (start-sdk 1.3.3)',
-    es_ES: 'Actualizaciones internas (start-sdk 1.3.3)',
-    de_DE: 'Interne Aktualisierungen (start-sdk 1.3.3)',
-    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 1.3.3)',
-    fr_FR: 'Mises à jour internes (start-sdk 1.3.3)',
+    en_US: `**Bumps**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0
+
+**Internal**
+
+- Reactive URL detection: Gitea now follows the upstream 1.26 default of \`PUBLIC_URL_DETECTION=auto\`, so links rendered in the web UI follow the URL you used to reach Gitea. The primary URL still drives generated clone URLs and email links.`,
+    es_ES: `**Actualizaciones**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0
+
+**Interno**
+
+- Detección de URL reactiva: Gitea sigue ahora el valor predeterminado de la versión 1.26 (\`PUBLIC_URL_DETECTION=auto\`), por lo que los enlaces que se muestran en la interfaz web siguen la URL que utilizaste para acceder a Gitea. La URL principal sigue determinando las URLs de clonación generadas y los enlaces de correo.`,
+    de_DE: `**Aktualisierungen**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0
+
+**Intern**
+
+- Reaktive URL-Erkennung: Gitea folgt jetzt dem Upstream-Standard von 1.26 (\`PUBLIC_URL_DETECTION=auto\`), sodass Links in der Web-Oberfläche der URL folgen, mit der du Gitea aufgerufen hast. Die primäre URL steuert weiterhin generierte Klon-URLs und E-Mail-Links.`,
+    pl_PL: `**Aktualizacje**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0
+
+**Wewnętrzne**
+
+- Reaktywne wykrywanie URL: Gitea używa teraz domyślnego ustawienia z wersji 1.26 (\`PUBLIC_URL_DETECTION=auto\`), więc linki w interfejsie webowym podążają za adresem URL, którego użyto do uzyskania dostępu do Gitea. URL główny nadal kontroluje generowane URL-e klonowania i linki w wiadomościach e-mail.`,
+    fr_FR: `**Mises à niveau**
+
+- Gitea → 1.26.1
+- start-sdk → 1.5.0
+
+**Interne**
+
+- Détection d'URL réactive : Gitea suit désormais la valeur par défaut de la version 1.26 (\`PUBLIC_URL_DETECTION=auto\`), de sorte que les liens affichés dans l'interface web suivent l'URL que vous avez utilisée pour accéder à Gitea. L'URL principale continue de piloter les URL de clonage générées et les liens des e-mails.`,
   },
   migrations: {
     up: async ({ effects }) => {

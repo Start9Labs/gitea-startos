@@ -9,13 +9,12 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/go-gitea/gitea',
   marketingUrl: 'https://gitea.com/',
   donationUrl: null,
-  docsUrls: ['https://gitea.com/gitea/docs'],
   description: { short, long },
   volumes: ['main'],
   images: {
     gitea: {
       source: {
-        dockerTag: 'gitea/gitea:1.25.5',
+        dockerTag: 'gitea/gitea:1.26.1',
       },
       arch: ['x86_64', 'aarch64', 'riscv64'],
     },

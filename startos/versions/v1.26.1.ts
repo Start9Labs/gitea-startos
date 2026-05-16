@@ -5,28 +5,28 @@ import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
 export const v_1_26_1 = VersionInfo.of({
-  version: '1.26.1:1',
+  version: '1.26.1:2',
   releaseNotes: {
     en_US: `**Bumps**
 
 - Gitea → 1.26.1
-- start-sdk → 1.5.0`,
+- start-sdk → 1.5.2`,
     es_ES: `**Cambios de versión**
 
 - Gitea → 1.26.1
-- start-sdk → 1.5.0`,
+- start-sdk → 1.5.2`,
     de_DE: `**Versionssprünge**
 
 - Gitea → 1.26.1
-- start-sdk → 1.5.0`,
+- start-sdk → 1.5.2`,
     pl_PL: `**Zmiany wersji**
 
 - Gitea → 1.26.1
-- start-sdk → 1.5.0`,
+- start-sdk → 1.5.2`,
     fr_FR: `**Mises à niveau**
 
 - Gitea → 1.26.1
-- start-sdk → 1.5.0`,
+- start-sdk → 1.5.2`,
   },
   migrations: {
     up: async ({ effects }) => {

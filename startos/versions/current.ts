@@ -4,7 +4,7 @@ import { getHttpInterfaceUrls, getSecretKey } from '../utils'
 import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
-export const v_1_26_2 = VersionInfo.of({
+export const current = VersionInfo.of({
   version: '1.26.2:0',
   releaseNotes: {
     en_US: `**Bumps**

@@ -94,6 +94,7 @@ These settings are controlled exclusively through StartOS actions and cannot be 
 | Secret key | `GITEA__security__SECRET_KEY` | Auto-generated at install, stored in `store.json` |
 | User registration | `GITEA__service__DISABLE_REGISTRATION` | "Enable/Disable Registrations" action |
 | LFS path | `GITEA__lfs__PATH` | Always `/data/git/lfs` (hardcoded) |
+| Session cookie name | `GITEA__session__COOKIE_NAME` | Always `i_like_gitea` (hardcoded) — avoids cookie collisions with other services on the same local hostname |
 | SMTP/mailer | `GITEA__mailer__*` | "Configure SMTP" action |
 
 ### Settings NOT managed by StartOS
@@ -296,6 +297,7 @@ startos_managed_env_vars:
   - GITEA__security__SECRET_KEY
   - GITEA__service__DISABLE_REGISTRATION
   - GITEA__lfs__PATH
+  - GITEA__session__COOKIE_NAME
   - GITEA__mailer__ENABLED
   - GITEA__mailer__SMTP_ADDR
   - GITEA__mailer__SMTP_PORT

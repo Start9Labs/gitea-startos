@@ -82,6 +82,10 @@ export const main = sdk.setupMain(async ({ effects }) => {
     ),
     GITEA__security__INSTALL_LOCK: 'true',
     GITEA__security__SECRET_KEY,
+    // Gitea's default session cookie is the generic `session`, which collides
+    // with other services on the same StartOS LAN host (cookies are host-scoped,
+    // port-agnostic). Pin a unique name so a stale cookie can't 500 the login.
+    GITEA__session__COOKIE_NAME: 'i_like_gitea',
     ...(mailer || {}),
   }
 
@@ -161,6 +165,7 @@ type GiteaEnv = GiteaMailer & {
   GITEA__server__SSH_PORT?: string
   GITEA__security__INSTALL_LOCK: 'true'
   GITEA__security__SECRET_KEY: string
+  GITEA__session__COOKIE_NAME: 'i_like_gitea'
   GITEA__service__DISABLE_REGISTRATION: string
 }
 

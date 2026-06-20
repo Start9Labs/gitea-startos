@@ -5,28 +5,23 @@ import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
 export const current = VersionInfo.of({
-  version: '1.26.2:0',
+  version: '1.26.2:1',
   releaseNotes: {
-    en_US: `**Bumps**
+    en_US: `**Improvements**
 
-- Gitea → 1.26.2
-- start-sdk → 1.5.3`,
-    es_ES: `**Cambios de versión**
+- Use a unique session cookie name (\`i_like_gitea\`) instead of the generic \`session\`, preventing login errors when other services share the same local hostname. You may need to sign in again after updating.`,
+    es_ES: `**Mejoras**
 
-- Gitea → 1.26.2
-- start-sdk → 1.5.3`,
-    de_DE: `**Versionssprünge**
+- Se usa un nombre único para la cookie de sesión (\`i_like_gitea\`) en lugar del genérico \`session\`, evitando errores de inicio de sesión cuando otros servicios comparten el mismo nombre de host local. Es posible que debas iniciar sesión de nuevo tras la actualización.`,
+    de_DE: `**Verbesserungen**
 
-- Gitea → 1.26.2
-- start-sdk → 1.5.3`,
-    pl_PL: `**Zmiany wersji**
+- Es wird ein eindeutiger Name für das Sitzungs-Cookie (\`i_like_gitea\`) anstelle des generischen \`session\` verwendet, um Anmeldefehler zu vermeiden, wenn andere Dienste denselben lokalen Hostnamen nutzen. Nach dem Update musst du dich möglicherweise erneut anmelden.`,
+    pl_PL: `**Ulepszenia**
 
-- Gitea → 1.26.2
-- start-sdk → 1.5.3`,
-    fr_FR: `**Mises à niveau**
+- Używana jest unikalna nazwa ciasteczka sesji (\`i_like_gitea\`) zamiast ogólnej \`session\`, co zapobiega błędom logowania, gdy inne usługi współdzielą tę samą lokalną nazwę hosta. Po aktualizacji może być konieczne ponowne zalogowanie.`,
+    fr_FR: `**Améliorations**
 
-- Gitea → 1.26.2
-- start-sdk → 1.5.3`,
+- Utilisation d'un nom unique pour le cookie de session (\`i_like_gitea\`) au lieu du générique \`session\`, évitant les erreurs de connexion lorsque d'autres services partagent le même nom d'hôte local. Vous devrez peut-être vous reconnecter après la mise à jour.`,
   },
   migrations: {
     up: async ({ effects }) => {

@@ -5,23 +5,83 @@ import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
 export const current = VersionInfo.of({
-  version: '1.26.2:1',
+  version: '1.26.4:0',
   releaseNotes: {
-    en_US: `**Improvements**
+    en_US: `Updated Gitea to 1.26.4.
 
-- Use a unique session cookie name (\`i_like_gitea\`) instead of the generic \`session\`, preventing login errors when other services share the same local hostname. You may need to sign in again after updating.`,
-    es_ES: `**Mejoras**
+**Security**
 
-- Se usa un nombre único para la cookie de sesión (\`i_like_gitea\`) en lugar del genérico \`session\`, evitando errores de inicio de sesión cuando otros servicios comparten el mismo nombre de host local. Es posible que debas iniciar sesión de nuevo tras la actualización.`,
-    de_DE: `**Verbesserungen**
+- Disabled users are no longer auto-reactivated on OAuth2 login, plus several LFS, host-matcher, and IP-range hardening fixes.
 
-- Es wird ein eindeutiger Name für das Sitzungs-Cookie (\`i_like_gitea\`) anstelle des generischen \`session\` verwendet, um Anmeldefehler zu vermeiden, wenn andere Dienste denselben lokalen Hostnamen nutzen. Nach dem Update musst du dich möglicherweise erneut anmelden.`,
-    pl_PL: `**Ulepszenia**
+**Breaking**
 
-- Używana jest unikalna nazwa ciasteczka sesji (\`i_like_gitea\`) zamiast ogólnej \`session\`, co zapobiega błędom logowania, gdy inne usługi współdzielą tę samą lokalną nazwę hosta. Po aktualizacji może być konieczne ponowne zalogowanie.`,
-    fr_FR: `**Améliorations**
+- Gitea Actions now requires a merged PR to bypass the fork PR approval gate.
 
-- Utilisation d'un nom unique pour le cookie de session (\`i_like_gitea\`) au lieu du générique \`session\`, évitant les erreurs de connexion lorsque d'autres services partagent le même nom d'hôte local. Vous devrez peut-être vous reconnecter après la mise à jour.`,
+**Fixes**
+
+- Resolves the "context deadline exceeded" regression from 1.26.3 when opening repository code pages, plus numerous other bug fixes.
+
+Full notes: https://github.com/go-gitea/gitea/releases/tag/v1.26.4`,
+    es_ES: `Gitea actualizado a 1.26.4.
+
+**Seguridad**
+
+- Los usuarios deshabilitados ya no se reactivan automáticamente al iniciar sesión con OAuth2, además de varias mejoras de seguridad en LFS, el comparador de hosts y los rangos de IP.
+
+**Cambios importantes**
+
+- Gitea Actions ahora requiere un PR fusionado para omitir la verificación de aprobación de PR de bifurcaciones.
+
+**Correcciones**
+
+- Soluciona la regresión "context deadline exceeded" de la 1.26.3 al abrir las páginas de código de un repositorio, junto con numerosas correcciones de errores.
+
+Notas completas: https://github.com/go-gitea/gitea/releases/tag/v1.26.4`,
+    de_DE: `Gitea auf 1.26.4 aktualisiert.
+
+**Sicherheit**
+
+- Deaktivierte Benutzer werden bei der OAuth2-Anmeldung nicht mehr automatisch reaktiviert, dazu mehrere Härtungsfixes für LFS, den Host-Matcher und IP-Bereiche.
+
+**Wichtige Änderungen**
+
+- Gitea Actions erfordert nun einen zusammengeführten PR, um die Genehmigungsprüfung für Fork-PRs zu umgehen.
+
+**Fehlerbehebungen**
+
+- Behebt die Regression "context deadline exceeded" aus 1.26.3 beim Öffnen der Code-Seiten eines Repositorys sowie zahlreiche weitere Fehlerbehebungen.
+
+Vollständige Hinweise: https://github.com/go-gitea/gitea/releases/tag/v1.26.4`,
+    pl_PL: `Zaktualizowano Gitea do 1.26.4.
+
+**Bezpieczeństwo**
+
+- Wyłączeni użytkownicy nie są już automatycznie ponownie aktywowani podczas logowania OAuth2, a także kilka poprawek zabezpieczeń dla LFS, dopasowywania hostów i zakresów IP.
+
+**Zmiany niekompatybilne**
+
+- Gitea Actions wymaga teraz scalonego PR, aby ominąć bramkę zatwierdzania PR z forka.
+
+**Poprawki**
+
+- Naprawia regresję "context deadline exceeded" z wersji 1.26.3 przy otwieraniu stron z kodem repozytorium oraz wiele innych błędów.
+
+Pełne informacje: https://github.com/go-gitea/gitea/releases/tag/v1.26.4`,
+    fr_FR: `Gitea mis à jour vers 1.26.4.
+
+**Sécurité**
+
+- Les utilisateurs désactivés ne sont plus réactivés automatiquement lors de la connexion OAuth2, ainsi que plusieurs correctifs de sécurité pour LFS, le comparateur d'hôtes et les plages d'IP.
+
+**Changements majeurs**
+
+- Gitea Actions exige désormais une PR fusionnée pour contourner le contrôle d'approbation des PR de forks.
+
+**Corrections**
+
+- Corrige la régression « context deadline exceeded » de la 1.26.3 lors de l'ouverture des pages de code d'un dépôt, ainsi que de nombreux autres correctifs.
+
+Notes complètes: https://github.com/go-gitea/gitea/releases/tag/v1.26.4`,
   },
   migrations: {
     up: async ({ effects }) => {

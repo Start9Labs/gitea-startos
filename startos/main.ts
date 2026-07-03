@@ -3,7 +3,7 @@ import { createAdmin } from './actions/createAdmin'
 import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
-import { mount, uiPort } from './utils'
+import { httpInterfaceId, mainHostId, mount, sshInterfaceId } from './utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   /**
@@ -62,15 +62,35 @@ export const main = sdk.setupMain(async ({ effects }) => {
   }
 
   const sshDomain = new URL(GITEA__server__ROOT_URL).hostname
-  const sshPort = await sdk.serviceInterface
-    .getOwn(
-      effects,
-      'ssh',
-      (i) =>
-        i?.addressInfo?.filter({ exclude: { kind: 'plugin' } }).hostnames?.[0]
-          ?.port ?? null,
-    )
-    .once()
+
+  // Gitea's `main` host carries both interfaces, so one subscription resolves
+  // everything we need off it: the ssh external port (for SSH_PORT) and our own
+  // http bridge URL for the in-box health check. The bridge URL replaces the
+  // retired `gitea.startos` DNS name so the check no longer rides the Tor/DNS
+  // layer; returning just these two values keeps `main` from re-running on
+  // unrelated host churn.
+  const { sshPort, healthUrl } = await sdk.host
+    .getOwn(effects, mainHostId, (host) => {
+      if (!host) return { sshPort: null, healthUrl: undefined }
+      const ifaces = Object.values(host.bindings).flatMap((b) =>
+        Object.values(b.interfaces),
+      )
+      const http = ifaces.find((i) => i.id === httpInterfaceId)
+      const ssh = ifaces.find((i) => i.id === sshInterfaceId)
+      return {
+        sshPort: ssh
+          ? (ssh.addressInfo
+              .filter({ exclude: { kind: 'plugin' } })
+              .hostnames?.[0]?.port ?? null)
+          : null,
+        healthUrl: http
+          ? http.addressInfo
+              .filter({ kind: 'bridge', predicate: (h) => !h.ssl })
+              .format('urlstring')[0]
+          : undefined,
+      }
+    })
+    .const()
 
   const env: GiteaEnv = {
     GITEA__lfs__PATH: '/data/git/lfs',
@@ -89,7 +109,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     ...(mailer || {}),
   }
 
-  const subcontainer = await sdk.SubContainer.of(
+  const subcontainer = sdk.SubContainer.of(
     effects,
     { imageId: 'gitea' },
     mount,
@@ -114,16 +134,19 @@ export const main = sdk.setupMain(async ({ effects }) => {
         display: i18n('Web Interface'),
         gracePeriod: 120000,
         fn: () =>
-          sdk.healthCheck.checkWebUrl(
-            effects,
-            `http://gitea.startos:${uiPort}/api/healthz`,
-            {
-              successMessage: i18n('Gitea is ready'),
-              errorMessage: i18n(
-                'Gitea is still starting. If this persists, please check the logs.',
-              ),
-            },
-          ),
+          healthUrl
+            ? sdk.healthCheck.checkWebUrl(effects, `${healthUrl}/api/healthz`, {
+                successMessage: i18n('Gitea is ready'),
+                errorMessage: i18n(
+                  'Gitea is still starting. If this persists, please check the logs.',
+                ),
+              })
+            : Promise.resolve({
+                result: 'starting' as const,
+                message: i18n(
+                  'Gitea is still starting. If this persists, please check the logs.',
+                ),
+              }),
       },
       requires: [],
     })

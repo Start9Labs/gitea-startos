@@ -1,10 +1,15 @@
-import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
+import { T, utils } from '@start9labs/start-sdk'
 import { sdk } from './sdk'
-import { utils } from '@start9labs/start-sdk'
 
 export const uiPort = 3000
 
+// Host id (the `sdk.MultiHost.of` group) carrying both the http and ssh
+// interfaces — distinct from the interface ids exported on it. Used for
+// `sdk.host.getOwn` lookups here and by dependents (gitea-runner) reading
+// gitea's http.
+export const mainHostId = 'main'
 export const httpInterfaceId = 'http'
+export const sshInterfaceId = 'ssh'
 
 export function getSecretKey() {
   return utils.getDefaultString({
@@ -27,10 +32,15 @@ export const mount = sdk.Mounts.of().mountVolume({
   readonly: false,
 })
 
-export async function getHttpInterfaceUrls(
-  effects: Effects,
-): Promise<string[]> {
-  return sdk.serviceInterface
-    .getOwn(effects, httpInterfaceId, (i) => i?.addressInfo?.nonLocal.format() || [])
+export function getHttpInterfaceUrls(effects: T.Effects): Promise<string[]> {
+  return sdk.host
+    .getOwn(effects, mainHostId, (host) => {
+      const iface =
+        host &&
+        Object.values(host.bindings)
+          .flatMap((b) => Object.values(b.interfaces))
+          .find((i) => i.id === httpInterfaceId)
+      return iface ? iface.addressInfo.nonLocal.format() : []
+    })
     .const()
 }

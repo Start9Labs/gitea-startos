@@ -1,9 +1,9 @@
 import { sdk } from './sdk'
-import { httpInterfaceId, uiPort } from './utils'
+import { httpInterfaceId, mainHostId, sshInterfaceId, uiPort } from './utils'
 import { i18n } from './i18n'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
-  const uiMulti = sdk.MultiHost.of(effects, 'main')
+  const uiMulti = sdk.MultiHost.of(effects, mainHostId)
 
   // http
   const httpOrigin = await uiMulti.bindPort(uiPort, {
@@ -28,7 +28,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   })
   const sshInterface = sdk.createInterface(effects, {
     name: i18n('git (SSH)'),
-    id: 'ssh',
+    id: sshInterfaceId,
     description: i18n('Used for git over SSH'),
     type: 'api',
     masked: false,

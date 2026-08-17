@@ -79,8 +79,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       const ssh = ifaces.find((i) => i.id === sshInterfaceId)
       return {
         sshPort: ssh
-          ? (ssh.addressInfo
-              .filter({ exclude: { kind: 'plugin' } })
+          ? (ssh.addressInfo.filter({ exclude: { kind: 'plugin' } })
               .hostnames?.[0]?.port ?? null)
           : null,
         healthUrl: http

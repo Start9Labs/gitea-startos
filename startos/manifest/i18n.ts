@@ -16,5 +16,5 @@ export const long = {
   pl_PL:
     'Gitea to zarządzane przez społeczność lekkie rozwiązanie do hostingu kodu napisane w Go. Jest publikowane na licencji MIT',
   fr_FR:
-    'Gitea est une solution légère d\'hébergement de code gérée par la communauté, écrite en Go. Elle est publiée sous la licence MIT',
+    "Gitea est une solution légère d'hébergement de code gérée par la communauté, écrite en Go. Elle est publiée sous la licence MIT",
 }

@@ -28,7 +28,7 @@ export const manageSmtp = sdk.Action.withInput(
 
   // optionally pre-fill the input form
   async ({ effects }) => ({
-    smtp: smtpPrefill(await storeJson.read((s) => s.smtp).const(effects)),
+    smtp: smtpPrefill(await storeJson.read((s) => s.smtp).once()),
   }),
 
   // the execution function

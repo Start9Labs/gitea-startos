@@ -14,7 +14,8 @@ export const inputSpec = InputSpec.of({
     default: 'main',
     patterns: [
       {
-        regex: '^[A-Za-z0-9][A-Za-z0-9._/-]*$',
+        regex:
+          '^(?!.*(?:\\.\\.|//|/\\.|\\.lock(?:/|$)))[A-Za-z0-9](?:[A-Za-z0-9._/-]*[A-Za-z0-9_-])?$',
         description: i18n('Must be a valid branch name'),
       },
     ],

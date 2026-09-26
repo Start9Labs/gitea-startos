@@ -68,19 +68,21 @@ One model, holding the values Gitea's installation wizard would otherwise ask fo
 | `GITEA__server__ROOT_URL`              | Init, then Set Primary URL             | Re-asserted by init if the stored address stops being published |
 | `GITEA__service__DISABLE_REGISTRATION` | Install, then the Registrations action | Defaults to **true**                                            |
 | `smtp`                                 | The Configure SMTP action              | StartOS's system SMTP, your own server, or disabled             |
+| `config`                               | The Configure action                   | Gitea's own defaults until changed                              |
 
 `ROOT_URL` is the one value the package re-asserts rather than leaving alone: init compares it against the addresses currently published for the interface and falls back to the `.local` one when the stored address has gone away. An address you chose is kept for as long as it stays reachable.
 
 **No configuration file reaches the application.** Gitea is configured entirely by environment, composed fresh on each start, and that is where this package's overrides live:
 
-| Variable                                | Value                                  | Why it differs from leaving Gitea alone                                                                                                                                               |
-| --------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GITEA__security__INSTALL_LOCK`         | `true`                                 | Skips the installation wizard entirely                                                                                                                                                |
-| `GITEA__service__DISABLE_REGISTRATION`  | `true` at install                      | A personal forge should not accept strangers by default                                                                                                                               |
-| `GITEA__session__COOKIE_NAME`           | a name unique to this package          | Gitea's default cookie name is generic, and cookies are host-scoped rather than port-scoped — so a second service on the same LAN host can collide with it and produce a 500 on login |
-| `GITEA__server__SSH_DOMAIN`, `SSH_PORT` | Derived from the published SSH binding | The clone URLs Gitea displays have to name the port StartOS actually assigned                                                                                                         |
-| `GITEA__lfs__PATH`                      | A path on the volume                   | Keeps LFS objects with the repositories                                                                                                                                               |
-| `GITEA__mailer__*`                      | Derived from the SMTP selection        | Off unless configured                                                                                                                                                                 |
+| Variable                                                                                              | Value                                       | Why it differs from leaving Gitea alone                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GITEA__security__INSTALL_LOCK`                                                                       | `true`                                      | Skips the installation wizard entirely                                                                                                                                                |
+| `GITEA__service__DISABLE_REGISTRATION`                                                                | `true` at install                           | A personal forge should not accept strangers by default                                                                                                                               |
+| `GITEA__session__COOKIE_NAME`                                                                         | a name unique to this package               | Gitea's default cookie name is generic, and cookies are host-scoped rather than port-scoped — so a second service on the same LAN host can collide with it and produce a 500 on login |
+| `GITEA__server__SSH_DOMAIN`, `SSH_PORT`                                                               | Derived from the published SSH binding      | The clone URLs Gitea displays have to name the port StartOS actually assigned                                                                                                         |
+| `GITEA__lfs__PATH`                                                                                    | A path on the volume                        | Keeps LFS objects with the repositories                                                                                                                                               |
+| `GITEA__repository__*`, `GITEA__service__*`, `GITEA__server__LANDING_PAGE`, `GITEA__actions__ENABLED` | From `config` — see [Configure](#configure) | Always passed, even at Gitea's default, because Gitea writes each into `app.ini` and would otherwise keep a value you later reset                                                     |
+| `GITEA__mailer__*`                                                                                    | Derived from the SMTP selection             | Off unless configured                                                                                                                                                                 |
 
 ## Dependencies
 
@@ -107,7 +109,7 @@ Since registrations are disabled at install, creating that first admin through t
 
 ## Actions
 
-Five actions, all user-facing.
+Six actions, all user-facing.
 
 ### Create Admin User
 
@@ -142,6 +144,28 @@ Toggles open sign-ups. The action describes what running it will do rather than 
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** idempotent in both directions; existing accounts are unaffected.
 
+### Configure
+
+Sets Gitea options that upstream exposes only in `app.ini`, not in its admin panel. Every field defaults to Gitea's own default.
+
+| Field                                   | `app.ini` key                                 | Default  |
+| --------------------------------------- | --------------------------------------------- | -------- |
+| Default Branch                          | `[repository] DEFAULT_BRANCH`                 | `main`   |
+| Default Repository Visibility           | `[repository] DEFAULT_PRIVATE`                | `last`   |
+| Push to Create (Users)                  | `[repository] ENABLE_PUSH_CREATE_USER`        | off      |
+| Push to Create (Organizations)          | `[repository] ENABLE_PUSH_CREATE_ORG`         | off      |
+| Require Sign-in to View                 | `[service] REQUIRE_SIGNIN_VIEW`               | off      |
+| Keep Email Private by Default           | `[service] DEFAULT_KEEP_EMAIL_PRIVATE`        | off      |
+| Allow Creating Organizations by Default | `[service] DEFAULT_ALLOW_CREATE_ORGANIZATION` | on       |
+| Default User Visibility                 | `[service] DEFAULT_USER_VISIBILITY`           | `public` |
+| Landing Page                            | `[server] LANDING_PAGE`                       | `home`   |
+| Enable Actions                          | `[actions] ENABLED`                           | on       |
+
+- **What it changes:** `config` in `store.json`, passed to Gitea as `GITEA__<section>__<KEY>` on the next start.
+- **Cost:** seconds, then a restart.
+- **Repeat safety:** idempotent; the form is pre-filled. The "default" settings apply only to repositories and accounts created afterwards.
+- **Dependents:** Gitea Runner raises a critical task on this action whenever Enable Actions is off.
+
 ### Configure SMTP
 
 Sets up outbound email for notifications, password resets, and verification.
@@ -175,7 +199,7 @@ It probes Gitea's own health endpoint through the service bridge rather than onl
 
 The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No dump step and nothing excluded.
 
-- **Included:** every repository and its LFS objects, the database with accounts and settings, and `store.json` with the secret key, root URL, and SMTP settings.
+- **Included:** every repository and its LFS objects, the database with accounts and settings, and `store.json` with the secret key, root URL, SMTP settings, and Configure settings.
 - **Restore:** complete. Because the secret key travels with the backup, stored credentials and tokens keep working, and no admin task is raised since the account already exists. If the restored server does not publish the address the backup recorded, init picks a local one — check [Set Primary URL](#actions) before handing out clone URLs.
 
 ## Limitations and Differences
@@ -212,6 +236,16 @@ startos_managed_env_vars:
   - GITEA__service__DISABLE_REGISTRATION
   - GITEA__session__COOKIE_NAME
   - GITEA__lfs__PATH
+  - GITEA__repository__DEFAULT_BRANCH
+  - GITEA__repository__DEFAULT_PRIVATE
+  - GITEA__repository__ENABLE_PUSH_CREATE_USER
+  - GITEA__repository__ENABLE_PUSH_CREATE_ORG
+  - GITEA__service__REQUIRE_SIGNIN_VIEW
+  - GITEA__service__DEFAULT_KEEP_EMAIL_PRIVATE
+  - GITEA__service__DEFAULT_ALLOW_CREATE_ORGANIZATION
+  - GITEA__service__DEFAULT_USER_VISIBILITY
+  - GITEA__server__LANDING_PAGE
+  - GITEA__actions__ENABLED
   - GITEA__mailer__ENABLED
   - GITEA__mailer__PROTOCOL # when SMTP is configured
   - GITEA__mailer__SMTP_ADDR # when SMTP is configured
@@ -228,6 +262,7 @@ actions:
   - reset-admin # only-running
   - set-primary-url
   - registrations
+  - configure
   - manage-smtp
 tasks:
   - { action: create-admin, severity: important }

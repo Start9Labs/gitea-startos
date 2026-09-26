@@ -24,6 +24,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     GITEA__security__SECRET_KEY,
     GITEA__service__DISABLE_REGISTRATION,
     smtp,
+    config,
   } = store
 
   let smtpCredentials: T.SmtpValue | null = null
@@ -105,6 +106,9 @@ export const main = sdk.setupMain(async ({ effects }) => {
     // with other services on the same StartOS LAN host (cookies are host-scoped,
     // port-agnostic). Pin a unique name so a stale cookie can't 500 the login.
     GITEA__session__COOKIE_NAME: 'i_like_gitea',
+    ...Object.fromEntries(
+      Object.entries(config).map(([k, v]) => [k, String(v)]),
+    ),
     ...(mailer || {}),
   }
 

@@ -32,6 +32,7 @@ Open the **git (SSH)** interface to see the SSH host and port. Add your SSH publ
 
 - **Set Primary Url** — pick which of the available HTTP URLs Gitea uses when generating clone URLs, links in emails, OAuth callbacks, and so on. Switch this whenever you add or change a domain you want users to see.
 - **Enable / Disable Registrations** — toggle whether anyone with your Gitea URL can create an account. Registrations are disabled by default; enabling them is a public-signup decision, so the action confirms it with a warning.
+- **Configure** — set Gitea options that otherwise live only in its configuration file: the default branch name and visibility for new repositories, push-to-create, whether visitors must sign in to see anything, defaults for new accounts, the landing page, and whether Gitea Actions is enabled (Gitea Runner requires it). Changes to defaults apply only to repositories and accounts created afterwards.
 - **Configure SMTP** — set the credentials Gitea uses to send mail. Choose your StartOS system SMTP or supply a custom host, port, from-address, username, and password.
 - **Reset Admin Password** — pick an existing admin user and generate a new password for them. Use this to rotate the password or to recover an account whose password you've lost.
 

@@ -1,58 +1,90 @@
-import { VersionInfo } from '@start9labs/start-sdk'
+import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '1.27.3:1',
+  version: '28.0.0:0',
   releaseNotes: {
-    en_US: `Adds a Configure action for Gitea settings that are otherwise only available in its configuration file, including the default branch name for new repositories and whether Gitea Actions is enabled.
+    en_US: `Updated Gitea to 28.0.0.
 
-Updated Gitea to 1.27.3, a security release. Updating is recommended.
+**Upgrade precautions**
 
-- Security: eighteen fixes, including package registry access-scope enforcement, attachment and markup access checks tied to the owning repository, stricter trust boundaries for pull requests from forks, restricted hook permissions, and hidden owners' repositories no longer being listed.
-- Gitea Actions: raw artifact signatures are verified first, step-level \`continue-on-error\` expressions are left unevaluated, matrix jobs are grouped correctly, non-mapping matrix \`include\`/\`exclude\` is rejected, and YAML anchors and aliases are resolved.
-- Pull requests: the merged state is kept in sync with Git, review permalinks are available, and default compare links name the head repository.
-- Fixes for co-author trailers that are not valid email addresses, OpenPGP signatures no longer being verified against an SSH instance key, and correct Bleve search-index token filters.
+- Back up before updating. Gitea upgrades its database on first start; returning to an older version requires restoring a pre-update backup.
+- Completed Actions runs older than 400 days are automatically deleted, including their jobs, logs, and artifacts. The Configure action now exposes Actions Run Retention; set it to 0 before starting the upgraded service to keep run history indefinitely. Logs and artifacts retain their separate retention policies.
+- Git imports and mirrors use Gitea's egress policy. For private destinations, use Allowed Migration and Mirror Hosts in Configure to allow trusted IPs or CIDRs and ports.
 
-Full release notes: https://github.com/go-gitea/gitea/releases/tag/v1.27.3`,
-    es_ES: `Añade una acción Configurar para los ajustes de Gitea que de otro modo solo están disponibles en su archivo de configuración, incluidos el nombre de la rama predeterminada de los repositorios nuevos y si Gitea Actions está activado.
+**Features and fixes**
 
-Actualiza Gitea a 1.27.3, una versión de seguridad. Se recomienda actualizar.
+- Adds bot account management, deploy tokens, token regeneration, and richer Actions workflow management.
+- Includes security fixes for Git pushes, SSH authentication, repository permissions, and fork workflow approval gates.
+- Enables the Git LFS server with objects stored on the managed volume.
+- The readiness check now rejects unhealthy HTTP responses from Gitea's health endpoint.
 
-- Seguridad: dieciocho correcciones, entre ellas la aplicación de los ámbitos de acceso del registro de paquetes, comprobaciones de acceso de los adjuntos y del marcado vinculadas al repositorio propietario, límites de confianza más estrictos para las solicitudes de incorporación desde bifurcaciones, permisos restringidos de los hooks y repositorios de propietarios ocultos que ya no se listan.
-- Gitea Actions: las firmas de los artefactos sin procesar se verifican primero, las expresiones \`continue-on-error\` a nivel de paso quedan sin evaluar, los trabajos de matriz se agrupan correctamente, se rechazan los \`include\`/\`exclude\` de matriz que no son asignaciones y se resuelven los anclas y alias de YAML.
-- Solicitudes de incorporación: el estado de fusión se mantiene sincronizado con Git, hay enlaces permanentes a las revisiones y los enlaces de comparación predeterminados nombran el repositorio de origen.
-- Correcciones para los remolques de coautoría que no son direcciones de correo válidas, las firmas OpenPGP que ya no se verifican con una clave SSH de la instancia y los filtros de tokens del índice de búsqueda Bleve.
+Full release notes: https://github.com/go-gitea/gitea/releases/tag/v28.0.0`,
+    es_ES: `Actualiza Gitea a 28.0.0.
 
-Notas de la versión completas: https://github.com/go-gitea/gitea/releases/tag/v1.27.3`,
-    de_DE: `Fügt eine Aktion „Konfigurieren“ für Gitea-Einstellungen hinzu, die sonst nur in der Konfigurationsdatei verfügbar sind, darunter der Standard-Branch-Name für neue Repositories und ob Gitea Actions aktiviert ist.
+**Precauciones para la actualización**
 
-Aktualisiert Gitea auf 1.27.3, eine Sicherheitsversion. Ein Update wird empfohlen.
+- Haz una copia de seguridad antes de actualizar. Gitea actualiza su base de datos en el primer inicio; volver a una versión anterior requiere restaurar una copia previa a la actualización.
+- Las ejecuciones completadas de Actions con más de 400 días se eliminan automáticamente, incluidos sus trabajos, registros y artefactos. La acción Configurar ahora ofrece la retención de ejecuciones de Actions; ponla en 0 antes de iniciar el servicio actualizado para conservar el historial indefinidamente. Los registros y los artefactos mantienen sus políticas de retención independientes.
+- Las importaciones y los espejos de Git usan la política de salida de Gitea. Para destinos privados, usa los hosts permitidos para importaciones y espejos en Configurar para permitir IP o CIDR y puertos de confianza.
 
-- Sicherheit: achtzehn Korrekturen, darunter die Durchsetzung der Zugriffsbereiche der Paket-Registry, an das besitzende Repository gebundene Zugriffsprüfungen für Anhänge und Markup, strengere Vertrauensgrenzen für Pull Requests aus Forks, eingeschränkte Hook-Berechtigungen und Repositories verborgener Eigentümer, die nicht mehr aufgelistet werden.
-- Gitea Actions: Rohe Artefaktsignaturen werden zuerst geprüft, \`continue-on-error\`-Ausdrücke auf Schrittebene bleiben unausgewertet, Matrix-Jobs werden korrekt gruppiert, Matrix-\`include\`/-\`exclude\` ohne Zuordnung wird abgelehnt, und YAML-Anker und -Aliase werden aufgelöst.
-- Pull Requests: Der Merge-Zustand bleibt mit Git synchron, Permalinks zu Reviews sind verfügbar, und Standard-Vergleichslinks nennen das Quell-Repository.
-- Korrekturen für Co-Author-Trailer, die keine gültigen E-Mail-Adressen sind, für OpenPGP-Signaturen, die nicht mehr mit einem SSH-Instanzschlüssel geprüft werden, und für die Token-Filter des Bleve-Suchindex.
+**Funciones y correcciones**
 
-Vollständige Versionshinweise: https://github.com/go-gitea/gitea/releases/tag/v1.27.3`,
-    pl_PL: `Dodaje akcję Konfiguruj dla ustawień Gitea dostępnych w przeciwnym razie tylko w jej pliku konfiguracyjnym, w tym nazwy domyślnej gałęzi nowych repozytoriów i włączenia Gitea Actions.
+- Añade gestión de cuentas bot, tokens de despliegue, regeneración de tokens y una gestión más completa de los flujos de Actions.
+- Incluye correcciones de seguridad para envíos de Git, autenticación SSH, permisos de repositorios y aprobación de flujos desde bifurcaciones.
+- Activa el servidor Git LFS con los objetos almacenados en el volumen administrado.
+- La comprobación de disponibilidad ahora rechaza las respuestas HTTP que indican un fallo en el punto de salud de Gitea.
 
-Aktualizuje Gitea do 1.27.3, wydania zabezpieczeń. Zalecana jest aktualizacja.
+Notas de la versión completas: https://github.com/go-gitea/gitea/releases/tag/v28.0.0`,
+    de_DE: `Aktualisiert Gitea auf 28.0.0.
 
-- Bezpieczeństwo: osiemnaście poprawek, w tym egzekwowanie zakresów dostępu rejestru pakietów, kontrole dostępu do załączników i znaczników powiązane z repozytorium właściciela, ściślejsze granice zaufania dla żądań scalenia z rozwidleń, ograniczone uprawnienia hooków oraz repozytoria ukrytych właścicieli, które nie są już wymieniane.
-- Gitea Actions: surowe podpisy artefaktów są weryfikowane w pierwszej kolejności, wyrażenia \`continue-on-error\` na poziomie kroku pozostają nieobliczone, zadania macierzowe są poprawnie grupowane, macierzowe \`include\`/\`exclude\` niebędące mapowaniem są odrzucane, a kotwice i aliasy YAML są rozwiązywane.
-- Żądania scalenia: stan scalenia pozostaje zsynchronizowany z Gitem, dostępne są odnośniki bezpośrednie do recenzji, a domyślne odnośniki porównania wskazują repozytorium źródłowe.
-- Poprawki dla przyczepek współautorstwa niebędących poprawnymi adresami e-mail, podpisów OpenPGP, które nie są już weryfikowane kluczem SSH instancji, oraz filtrów tokenów indeksu wyszukiwania Bleve.
+**Vorsichtsmaßnahmen beim Update**
 
-Pełne informacje o wydaniu: https://github.com/go-gitea/gitea/releases/tag/v1.27.3`,
-    fr_FR: `Ajoute une action Configurer pour les paramètres de Gitea autrement disponibles uniquement dans son fichier de configuration, dont le nom de la branche par défaut des nouveaux dépôts et l'activation de Gitea Actions.
+- Vor dem Update ein Backup erstellen. Gitea aktualisiert die Datenbank beim ersten Start; die Rückkehr zu einer älteren Version erfordert die Wiederherstellung eines Backups von vor dem Update.
+- Abgeschlossene Actions-Läufe, die älter als 400 Tage sind, werden automatisch samt Jobs, Logs und Artefakten gelöscht. Die Aktion Konfigurieren bietet jetzt die Aufbewahrung von Actions-Läufen an; vor dem Start des aktualisierten Dienstes auf 0 setzen, um den Verlauf unbegrenzt aufzubewahren. Logs und Artefakte behalten ihre eigenen Aufbewahrungsregeln.
+- Git-Importe und -Spiegel verwenden Giteas Richtlinie für ausgehende Verbindungen. Für private Ziele in Konfigurieren unter den erlaubten Hosts für Importe und Spiegel vertrauenswürdige IPs oder CIDRs und Ports freigeben.
 
-Met à jour Gitea vers 1.27.3, une version de sécurité. La mise à jour est recommandée.
+**Funktionen und Korrekturen**
 
-- Sécurité : dix-huit corrections, dont l'application des portées d'accès du registre de paquets, des contrôles d'accès aux pièces jointes et au balisage liés au dépôt propriétaire, des limites de confiance plus strictes pour les demandes de tirage issues de bifurcations, des permissions restreintes pour les hooks et les dépôts des propriétaires masqués qui ne sont plus répertoriés.
-- Gitea Actions : les signatures brutes des artefacts sont vérifiées en premier, les expressions \`continue-on-error\` au niveau de l'étape ne sont plus évaluées, les tâches de matrice sont regroupées correctement, les \`include\`/\`exclude\` de matrice qui ne sont pas des mappages sont rejetés et les ancres et alias YAML sont résolus.
-- Demandes de tirage : l'état de fusion reste synchronisé avec Git, des liens permanents vers les revues sont disponibles et les liens de comparaison par défaut nomment le dépôt source.
-- Corrections des lignes de co-auteur qui ne sont pas des adresses e-mail valides, des signatures OpenPGP qui ne sont plus vérifiées avec une clé SSH de l'instance et des filtres de jetons de l'index de recherche Bleve.
+- Fügt die Verwaltung von Bot-Konten, Deployment-Tokens, Token-Neugenerierung und erweiterte Actions-Workflow-Verwaltung hinzu.
+- Enthält Sicherheitskorrekturen für Git-Pushes, SSH-Authentifizierung, Repository-Berechtigungen und Freigaben für Fork-Workflows.
+- Aktiviert den Git-LFS-Server mit Objekten auf dem verwalteten Volume.
+- Die Bereitschaftsprüfung lehnt jetzt HTTP-Antworten ab, die einen Fehler am Gitea-Gesundheitsendpunkt anzeigen.
 
-Notes de version complètes : https://github.com/go-gitea/gitea/releases/tag/v1.27.3`,
+Vollständige Versionshinweise: https://github.com/go-gitea/gitea/releases/tag/v28.0.0`,
+    pl_PL: `Aktualizuje Gitea do 28.0.0.
+
+**Środki ostrożności przy aktualizacji**
+
+- Wykonaj kopię zapasową przed aktualizacją. Gitea aktualizuje bazę danych przy pierwszym uruchomieniu; powrót do starszej wersji wymaga przywrócenia kopii sprzed aktualizacji.
+- Zakończone uruchomienia Actions starsze niż 400 dni są automatycznie usuwane wraz z zadaniami, logami i artefaktami. Akcja Konfiguruj udostępnia teraz okres przechowywania uruchomień Actions; ustaw 0 przed uruchomieniem zaktualizowanej usługi, aby zachować historię bezterminowo. Logi i artefakty zachowują odrębne zasady przechowywania.
+- Importy i kopie lustrzane Git korzystają z polityki połączeń wychodzących Gitea. Dla prywatnych adresów użyj dozwolonych hostów importów i kopii lustrzanych w akcji Konfiguruj, aby zezwolić na zaufane IP lub CIDR i porty.
+
+**Funkcje i poprawki**
+
+- Dodaje zarządzanie kontami botów, tokeny wdrożeniowe, ponowne generowanie tokenów i rozszerzone zarządzanie przepływami Actions.
+- Zawiera poprawki bezpieczeństwa wypychania Git, uwierzytelniania SSH, uprawnień repozytoriów i zatwierdzania przepływów z rozwidleń.
+- Włącza serwer Git LFS z obiektami przechowywanymi na zarządzanym woluminie.
+- Kontrola gotowości odrzuca teraz odpowiedzi HTTP sygnalizujące błąd w punkcie kontroli stanu Gitea.
+
+Pełne informacje o wydaniu: https://github.com/go-gitea/gitea/releases/tag/v28.0.0`,
+    fr_FR: `Met à jour Gitea vers 28.0.0.
+
+**Précautions pour la mise à jour**
+
+- Faites une sauvegarde avant la mise à jour. Gitea met à niveau sa base de données au premier démarrage ; revenir à une version antérieure nécessite de restaurer une sauvegarde réalisée avant la mise à jour.
+- Les exécutions Actions terminées depuis plus de 400 jours sont automatiquement supprimées avec leurs tâches, journaux et artefacts. L'action Configurer propose maintenant la conservation des exécutions Actions ; indiquez 0 avant de démarrer le service mis à jour pour conserver l'historique indéfiniment. Les journaux et artefacts gardent leurs règles de conservation distinctes.
+- Les imports et miroirs Git utilisent la politique de connexions sortantes de Gitea. Pour les destinations privées, utilisez les hôtes autorisés pour les imports et les miroirs dans Configurer afin d'autoriser des IP ou CIDR et ports de confiance.
+
+**Fonctionnalités et correctifs**
+
+- Ajoute la gestion des comptes bots, les jetons de déploiement, la régénération des jetons et une gestion enrichie des workflows Actions.
+- Inclut des correctifs de sécurité pour les pushes Git, l'authentification SSH, les permissions des dépôts et l'approbation des workflows issus de forks.
+- Active le serveur Git LFS avec les objets stockés sur le volume géré.
+- Le contrôle de disponibilité rejette maintenant les réponses HTTP signalant un échec au point de contrôle de santé de Gitea.
+
+Notes de version complètes : https://github.com/go-gitea/gitea/releases/tag/v28.0.0`,
   },
-  migrations: {},
+  migrations: {
+    down: IMPOSSIBLE,
+  },
 })

@@ -64,6 +64,13 @@ const dict = {
   'Sign In': 60,
   'Enable Actions': 61,
   'Run CI/CD workflows with Gitea Actions. Gitea Runner requires this to be on.': 62,
+  'Actions Run Retention': 63,
+  'Delete completed workflow runs older than this many days. Set 0 to keep runs indefinitely. Logs and artifacts have separate retention policies.': 64,
+  'Deleting a workflow run also deletes its jobs, logs, and artifacts. Back up before shortening retention.': 65,
+  'Allowed Migration and Mirror Hosts': 66,
+  'Comma-separated Gitea host rules for imports and mirrors. Public destinations are allowed by default. For a private server, allow its IP or CIDR with a port, for example 192.168.1.10:443. Leave empty for the default policy.': 67,
+  'Allow only trusted destinations. Every user permitted to import repositories can reach the addresses you allow.': 68,
+  Days: 69,
 } as const
 
 export type I18nKey = keyof typeof dict

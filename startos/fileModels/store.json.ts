@@ -1,6 +1,9 @@
 import { FileHelper, smtpShape, z } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 
+// Gitea multiplies retention days by a nanosecond duration.
+export const maxRunRetentionDays = 100000
+
 // Keys are Gitea env vars; every one is always passed, since Gitea persists them into app.ini.
 const configShape = z.object({
   GITEA__repository__DEFAULT_BRANCH: z.string().catch('main'),
@@ -19,7 +22,16 @@ const configShape = z.object({
     .enum(['home', 'explore', 'organizations', 'login'])
     .catch('home'),
   GITEA__actions__ENABLED: z.boolean().catch(true),
+  GITEA__actions__RUN_RETENTION_DAYS: z
+    .number()
+    .int()
+    .min(0)
+    .max(maxRunRetentionDays)
+    .catch(400),
+  GITEA__migrations__ALLOWED_HOST_LIST: z.string().nullable().catch(null),
 })
+
+export const configDefaults = configShape.parse({})
 
 const shape = z.looseObject({
   GITEA__server__ROOT_URL: z.string().catch(''),

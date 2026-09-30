@@ -94,6 +94,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
   const env: GiteaEnv = {
     GITEA__lfs__PATH: '/data/git/lfs',
+    GITEA__server__LFS_START_SERVER: 'true',
     GITEA__server__ROOT_URL,
     GITEA__server__SSH_DOMAIN: sshDomain,
     ...(sshPort ? { GITEA__server__SSH_PORT: String(sshPort) } : {}),
@@ -107,7 +108,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
     // port-agnostic). Pin a unique name so a stale cookie can't 500 the login.
     GITEA__session__COOKIE_NAME: 'i_like_gitea',
     ...Object.fromEntries(
-      Object.entries(config).map(([k, v]) => [k, String(v)]),
+      Object.entries(config).map(([k, v]) => [k, String(v ?? '')]),
     ),
     ...(mailer || {}),
   }
@@ -138,12 +139,24 @@ export const main = sdk.setupMain(async ({ effects }) => {
         gracePeriod: 120000,
         fn: () =>
           healthUrl
-            ? sdk.healthCheck.checkWebUrl(effects, `${healthUrl}/api/healthz`, {
-                successMessage: i18n('Gitea is ready'),
-                errorMessage: i18n(
-                  'Gitea is still starting. If this persists, please check the logs.',
-                ),
-              })
+            ? sdk.healthCheck.runHealthScript(
+                [
+                  'curl',
+                  '--fail',
+                  '--silent',
+                  '--show-error',
+                  '--max-time',
+                  '5',
+                  `${healthUrl}/api/healthz`,
+                ],
+                subcontainer,
+                {
+                  message: () => i18n('Gitea is ready'),
+                  errorMessage: i18n(
+                    'Gitea is still starting. If this persists, please check the logs.',
+                  ),
+                },
+              )
             : Promise.resolve({
                 result: 'starting' as const,
                 message: i18n(
@@ -186,6 +199,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
 type GiteaEnv = GiteaMailer & {
   GITEA__lfs__PATH: '/data/git/lfs'
+  GITEA__server__LFS_START_SERVER: 'true'
   GITEA__server__ROOT_URL: string
   GITEA__server__SSH_DOMAIN: string
   GITEA__server__SSH_PORT?: string

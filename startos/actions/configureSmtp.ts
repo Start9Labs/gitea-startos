@@ -9,7 +9,7 @@ export const inputSpec = InputSpec.of({
   smtp: sdk.inputSpecConstants.smtpInputSpec,
 })
 
-export const manageSmtp = sdk.Action.withInput(
+export const configureSmtp = sdk.Action.withInput(
   // id
   'manage-smtp',
 

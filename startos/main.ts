@@ -25,6 +25,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
     GITEA__service__DISABLE_REGISTRATION,
     smtp,
     config,
+    signing,
+    signingKey,
   } = store
 
   let smtpCredentials: T.SmtpValue | null = null
@@ -107,6 +109,14 @@ export const main = sdk.setupMain(async ({ effects }) => {
     // with other services on the same StartOS LAN host (cookies are host-scoped,
     // port-agnostic). Pin a unique name so a stale cookie can't 500 the login.
     GITEA__session__COOKIE_NAME: 'i_like_gitea',
+    GITEA__repository_0X2E_signing__SIGNING_KEY:
+      signing.enabled && signingKey ? signingKey.fingerprint : 'none',
+    GITEA__repository_0X2E_signing__SIGNING_NAME: signing.name,
+    GITEA__repository_0X2E_signing__SIGNING_EMAIL: signing.email,
+    GITEA__repository_0X2E_signing__MERGES: signing.merges,
+    GITEA__repository_0X2E_signing__CRUD_ACTIONS: signing.crudActions
+      ? 'always'
+      : 'never',
     ...Object.fromEntries(
       Object.entries(config).map(([k, v]) => [k, String(v ?? '')]),
     ),
@@ -199,6 +209,11 @@ type GiteaEnv = GiteaMailer & {
   GITEA__security__SECRET_KEY: string
   GITEA__session__COOKIE_NAME: 'i_like_gitea'
   GITEA__service__DISABLE_REGISTRATION: string
+  GITEA__repository_0X2E_signing__SIGNING_KEY: string
+  GITEA__repository_0X2E_signing__SIGNING_NAME: string
+  GITEA__repository_0X2E_signing__SIGNING_EMAIL: string
+  GITEA__repository_0X2E_signing__MERGES: string
+  GITEA__repository_0X2E_signing__CRUD_ACTIONS: 'always' | 'never'
 }
 
 type GiteaMailer =

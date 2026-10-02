@@ -190,7 +190,7 @@ Has Gitea sign the commits it creates itself — pull request merges, and option
 
 - **The key:** init generates an ed25519 GPG key once, in the keyring Gitea reads (`/data/gitea/home/.gnupg`), and records its fingerprint and public key in `store.json`. Turning signing off keeps the key, so turning it back on keeps the same signer.
 - **What it changes:** `signing` in `store.json`, passed as `GITEA__repository_0X2E_signing__*` on the next start.
-- **Options:** signer name and email (the committer on signed commits); which merges to sign — always, only approved pull requests (default), only when the base branch is signed, or only when every pull request commit is signed; and whether to sign web edits.
+- **Options:** signer name and email (the identity Gitea displays for its signing key, not a committer override under the default trust model); which merges to sign — always, only approved pull requests (default), only when the base branch is signed, or only when every pull request commit is signed; and whether to sign web edits.
 - **Result:** the armored public key, for adding wherever Gitea's signatures need to verify.
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** idempotent; the form is pre-filled.

@@ -17,13 +17,13 @@ export const inputSpec = InputSpec.of({
   }),
   name: Value.text({
     name: i18n('Signer Name'),
-    description: i18n('Committer name on the commits Gitea signs.'),
+    description: i18n('Name Gitea displays for its signing key.'),
     required: true,
     default: signingDefaults.name,
   }),
   email: Value.text({
     name: i18n('Signer Email'),
-    description: i18n('Committer email on the commits Gitea signs.'),
+    description: i18n('Email Gitea displays for its signing key.'),
     required: true,
     default: null,
     inputmode: 'email',

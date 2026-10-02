@@ -33,12 +33,27 @@ const configShape = z.object({
 
 export const configDefaults = configShape.parse({})
 
+export const signingShape = z.object({
+  enabled: z.boolean().catch(false),
+  name: z.string().catch('Gitea'),
+  email: z.string().catch(''),
+  merges: z
+    .enum(['always', 'approved', 'basesigned', 'commitssigned'])
+    .catch('approved'),
+  crudActions: z.boolean().catch(false),
+})
+
 const shape = z.looseObject({
   GITEA__server__ROOT_URL: z.string().catch(''),
   GITEA__security__SECRET_KEY: z.string(),
   GITEA__service__DISABLE_REGISTRATION: z.boolean().catch(true),
   smtp: smtpShape,
   config: configShape.catch(() => configShape.parse({})),
+  signing: signingShape.catch(() => signingShape.parse({})),
+  signingKey: z
+    .object({ fingerprint: z.string(), publicKey: z.string() })
+    .nullable()
+    .catch(null),
 })
 
 export const storeJson = FileHelper.json(

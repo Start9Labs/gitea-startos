@@ -1,6 +1,7 @@
 import { utils } from '@start9labs/start-sdk'
 import { signingShape, storeJson } from '../fileModels/store.json'
 import { i18n } from '../i18n'
+import { primaryUrl } from '../primaryUrl'
 import { sdk } from '../sdk'
 
 const { InputSpec, Value } = sdk
@@ -31,7 +32,9 @@ export const inputSpec = InputSpec.of({
   }),
   merges: Value.select({
     name: i18n('Sign Merges'),
-    description: i18n('Which pull request merges Gitea signs.'),
+    description: i18n(
+      'Which pull request merges Gitea signs.\n- Always: every merge\n- Only approved pull requests: merges of approved pull requests into protected branches\n- Only when the base branch is signed: merges onto a base branch whose latest commit is signed\n- Only when every pull request commit is signed: merges whose commits are all signed',
+    ),
     default: signingDefaults.merges,
     values: {
       always: i18n('Always'),
@@ -72,9 +75,8 @@ export const commitSigning = sdk.Action.withInput(
   async ({ effects }) => {
     const store = await storeJson.read().once()
     if (!store) return {}
-    const host = URL.canParse(store.GITEA__server__ROOT_URL)
-      ? new URL(store.GITEA__server__ROOT_URL).hostname
-      : ''
+    const rootUrl = await primaryUrl.bestUsable(effects).once()
+    const host = rootUrl ? new URL(rootUrl).hostname : ''
     return {
       ...store.signing,
       email: store.signing.email || (host ? `gitea@${host}` : ''),
@@ -97,11 +99,10 @@ export const commitSigning = sdk.Action.withInput(
             'Signing is off. This is the public key Gitea signs with when it is on.',
           ),
       result: {
-        type: 'single',
+        type: 'multiline',
         value: key.publicKey,
-        masked: false,
         copyable: true,
-        qr: false,
+        filename: 'gitea-signing-key.asc',
       },
     }
   },

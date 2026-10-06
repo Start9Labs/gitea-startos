@@ -2,6 +2,7 @@ import { T } from '@start9labs/start-sdk'
 import { createAdmin } from './actions/createAdmin'
 import { storeJson } from './fileModels/store.json'
 import { i18n } from './i18n'
+import { primaryUrl } from './primaryUrl'
 import { sdk } from './sdk'
 import { httpInterfaceId, mainHostId, mount, sshInterfaceId } from './utils'
 
@@ -20,7 +21,6 @@ export const main = sdk.setupMain(async ({ effects }) => {
   }
 
   const {
-    GITEA__server__ROOT_URL,
     GITEA__security__SECRET_KEY,
     GITEA__service__DISABLE_REGISTRATION,
     smtp,
@@ -64,7 +64,10 @@ export const main = sdk.setupMain(async ({ effects }) => {
       mailer.GITEA__mailer__PASSWD = smtpCredentials.password
   }
 
-  const sshDomain = new URL(GITEA__server__ROOT_URL).hostname
+  const rootUrl = await primaryUrl.bestUsable(effects).const()
+  if (!rootUrl) {
+    throw new Error(i18n('Gitea has no address to use as its primary URL'))
+  }
 
   // Gitea's `main` host carries both interfaces, so one subscription resolves
   // everything we need off it: the ssh external port (for SSH_PORT) and our own
@@ -97,8 +100,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
   const env: GiteaEnv = {
     GITEA__lfs__PATH: '/data/git/lfs',
     GITEA__server__LFS_START_SERVER: 'true',
-    GITEA__server__ROOT_URL,
-    GITEA__server__SSH_DOMAIN: sshDomain,
+    GITEA__server__ROOT_URL: rootUrl,
+    GITEA__server__SSH_DOMAIN: new URL(rootUrl).hostname,
     ...(sshPort ? { GITEA__server__SSH_PORT: String(sshPort) } : {}),
     GITEA__service__DISABLE_REGISTRATION: String(
       GITEA__service__DISABLE_REGISTRATION,

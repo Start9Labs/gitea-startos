@@ -5,7 +5,7 @@ import { sdk } from '../sdk'
 export const maxRunRetentionDays = 100000
 
 // Keys are Gitea env vars; every one is always passed, since Gitea persists them into app.ini.
-const configShape = z.object({
+const configShape = z.looseObject({
   GITEA__repository__DEFAULT_BRANCH: z.string().catch('main'),
   GITEA__repository__DEFAULT_PRIVATE: z
     .enum(['last', 'private', 'public'])
@@ -33,7 +33,7 @@ const configShape = z.object({
 
 export const configDefaults = configShape.parse({})
 
-export const signingShape = z.object({
+export const signingShape = z.looseObject({
   enabled: z.boolean().catch(false),
   name: z.string().catch('Gitea'),
   email: z.string().catch(''),
@@ -51,7 +51,7 @@ const shape = z.looseObject({
   config: configShape.catch(() => configShape.parse({})),
   signing: signingShape.catch(() => signingShape.parse({})),
   signingKey: z
-    .object({ fingerprint: z.string(), publicKey: z.string() })
+    .looseObject({ fingerprint: z.string(), publicKey: z.string() })
     .nullable()
     .catch(null),
 })

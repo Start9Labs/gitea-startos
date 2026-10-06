@@ -27,7 +27,9 @@ export const registrations = sdk.Action.withoutInput(
         ? i18n(
             'Anyone with your Gitea URL will be able to create an account on your server, which represents a security risk. Be careful!',
           )
-        : null,
+        : i18n(
+            'New accounts can no longer be created by signing up. Existing accounts are unaffected, and administrators can still create accounts from Site Administration.',
+          ),
       allowedStatuses: 'any',
       group: null,
       visibility: 'enabled',

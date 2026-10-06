@@ -1,12 +1,12 @@
 import { sdk } from '../sdk'
-import { setDependencies } from '../dependencies'
+import { dependencies } from '../dependencies'
 import { setInterfaces } from '../interfaces'
 import { versionGraph } from '../versions'
 import { actions } from '../actions'
 import { restoreInit } from '../backups'
 import { seedFiles } from './seedFiles'
 import { signingKey } from './signingKey'
-import { setPrimaryUrl } from './setPrimaryUrl'
+import { primaryUrlTask } from './primaryUrlTask'
 
 export const init = sdk.setupInit(
   restoreInit,
@@ -14,9 +14,9 @@ export const init = sdk.setupInit(
   seedFiles,
   signingKey,
   setInterfaces,
-  setDependencies,
   actions,
-  setPrimaryUrl,
+  dependencies,
+  primaryUrlTask,
 )
 
 export const uninit = sdk.setupUninit(versionGraph)

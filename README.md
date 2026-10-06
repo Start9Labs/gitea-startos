@@ -62,17 +62,17 @@ One model, holding the values Gitea's installation wizard would otherwise ask fo
 | ------------ | ------ | ----------------------- | ------------------------------------ |
 | `store.json` | JSON   | Yes — `FileHelper.json` | Install, every init, and the actions |
 
-| Key                                    | Set by                                 | Notes                                                           |
-| -------------------------------------- | -------------------------------------- | --------------------------------------------------------------- |
-| `GITEA__security__SECRET_KEY`          | Install                                | Generated once; stable for the life of the install              |
-| `GITEA__server__ROOT_URL`              | Init, then Set Primary URL             | Re-asserted by init if the stored address stops being published |
-| `GITEA__service__DISABLE_REGISTRATION` | Install, then the Registrations action | Defaults to **true**                                            |
-| `smtp`                                 | The Configure SMTP action              | StartOS's system SMTP, your own server, or disabled             |
-| `config`                               | The Configure action                   | Gitea's own defaults until changed                              |
-| `signing`                              | The Commit Signing action              | Off by default                                                  |
-| `signingKey`                           | Init, when missing                     | Gitea's GPG key fingerprint and public key; never replaced      |
+| Key                                    | Set by                                 | Notes                                                      |
+| -------------------------------------- | -------------------------------------- | ---------------------------------------------------------- |
+| `GITEA__security__SECRET_KEY`          | Install                                | Generated once; stable for the life of the install         |
+| `GITEA__server__ROOT_URL`              | Set Primary URL                        | Your choice; not passed to Gitea as-is (see below)         |
+| `GITEA__service__DISABLE_REGISTRATION` | Install, then the Registrations action | Defaults to **true**                                       |
+| `smtp`                                 | The Configure SMTP action              | StartOS's system SMTP, your own server, or disabled        |
+| `config`                               | The Configure action                   | Gitea's own defaults until changed                         |
+| `signing`                              | The Commit Signing action              | Off by default                                             |
+| `signingKey`                           | Init, when missing                     | Gitea's GPG key fingerprint and public key; never replaced |
 
-`ROOT_URL` is the one value the package re-asserts rather than leaving alone: init compares it against the addresses currently published for the interface and falls back to the `.local` one when the stored address has gone away. An address you chose is kept for as long as it stays reachable.
+**The stored `GITEA__server__ROOT_URL` is the choice, not what Gitea receives.** On each start the package passes `primaryUrl.bestUsable` (`sdk.setupPrimaryUrl`): the stored URL at its hostname's current port and scheme while that hostname is one of the `http` interface's addresses, and the `.local` address otherwise. The stored choice is never overwritten, so Gitea returns to it when the address comes back. An empty value means nothing has been chosen yet.
 
 The package supplies configuration through environment variables, composed fresh on each start. The upstream entrypoint persists these overrides in `/data/gitea/conf/app.ini`:
 
@@ -81,7 +81,8 @@ The package supplies configuration through environment variables, composed fresh
 | `GITEA__security__INSTALL_LOCK`                                                                                                         | `true`                                                 | Skips the installation wizard entirely                                                                                                                                                |
 | `GITEA__service__DISABLE_REGISTRATION`                                                                                                  | `true` at install                                      | A personal forge should not accept strangers by default                                                                                                                               |
 | `GITEA__session__COOKIE_NAME`                                                                                                           | a name unique to this package                          | Gitea's default cookie name is generic, and cookies are host-scoped rather than port-scoped — so a second service on the same LAN host can collide with it and produce a 500 on login |
-| `GITEA__server__SSH_DOMAIN`, `SSH_PORT`                                                                                                 | Derived from the published SSH binding                 | The clone URLs Gitea displays have to name the port StartOS actually assigned                                                                                                         |
+| `GITEA__server__ROOT_URL`, `SSH_DOMAIN`                                                                                                 | The primary URL in effect, and its hostname            | Links and HTTP and SSH clone URLs name the address you chose                                                                                                                          |
+| `GITEA__server__SSH_PORT`                                                                                                               | Read from the published SSH binding                    | The clone URLs Gitea displays have to name the port StartOS actually assigned                                                                                                         |
 | `GITEA__server__LFS_START_SERVER`, `GITEA__lfs__PATH`                                                                                   | `true`, a path on the volume                           | Enables the LFS server and keeps its objects with the repositories                                                                                                                    |
 | `GITEA__repository__*`, `GITEA__service__*`, `GITEA__server__LANDING_PAGE`, `GITEA__actions__*`, `GITEA__migrations__ALLOWED_HOST_LIST` | From `config` — see [Configure](#configure)            | Always passed, even at Gitea's default, because Gitea writes each into `app.ini` and would otherwise keep a value you later reset                                                     |
 | `GITEA__mailer__*`                                                                                                                      | Derived from the SMTP selection                        | Off unless configured                                                                                                                                                                 |
@@ -102,9 +103,11 @@ Two interfaces, both on one host.
 
 The SSH interface's external port is assigned by StartOS rather than fixed, which is why the package reads it back and hands it to Gitea — otherwise the clone URLs shown in the UI would name the wrong port.
 
+**Open UI opens the primary URL** — the `http` interface nominates it — falling back to StartOS's usual choice when it is not one of the interface's addresses.
+
 ## Installation and First-Run Flow
 
-Gitea's installation wizard never appears: install generates the secret key, locks the installer, and chooses a root URL from the interface's published addresses, preferring the `.local` one.
+Gitea's installation wizard never appears: install generates the secret key and locks the installer. No primary URL is chosen yet, so Gitea uses the `.local` address and a task asks you to choose one.
 
 That leaves one thing outstanding, and the package checks for it rather than assuming. Once the service is running, a oneshot asks Gitea whether any admin account exists; if none does, it raises a task pointing at Create Admin User. On a restored install the account already exists and no task appears.
 
@@ -112,7 +115,7 @@ Since registrations are disabled at install, creating that first admin through t
 
 ## Actions
 
-Six actions, all user-facing.
+Seven actions, all user-facing.
 
 ### Create Admin User
 
@@ -127,14 +130,15 @@ Creates the first administrator. Run it when the install task prompts.
 Generates a new password for an existing admin account. Run it when locked out.
 
 - **What it changes:** that account's password.
+- **Input:** the admin account, from Gitea's list of admins; nothing is preselected.
 - **Availability:** only while running.
 - **Repeat safety:** safe to re-run; each run generates a fresh password and invalidates the previous one.
 
 ### Set Primary URL
 
-Chooses which published address Gitea treats as its own — the base for clone URLs, links, and outbound email.
+Chooses which published address Gitea treats as its own — the base for clone URLs, links, and outbound email, and the address Open UI opens. Built by `sdk.setupPrimaryUrl`; the select preselects the `.local` address.
 
-- **What it changes:** `GITEA__server__ROOT_URL` in `store.json`, and with it the SSH domain derived from it.
+- **What it changes:** `GITEA__server__ROOT_URL` in `store.json`, which becomes Gitea's `ROOT_URL` and `SSH_DOMAIN` while it is one of the interface's addresses.
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** idempotent. Clone URLs already copied into someone's git remote keep pointing at the old address.
 - **Input:** a dropdown of the interface's non-local addresses, so an unreachable URL cannot be chosen.
@@ -145,7 +149,7 @@ Toggles open sign-ups. The action describes what running it will do rather than 
 
 - **What it changes:** `GITEA__service__DISABLE_REGISTRATION` in `store.json`.
 - **Cost:** seconds, then a restart.
-- **Repeat safety:** idempotent in both directions; existing accounts are unaffected.
+- **Repeat safety:** idempotent in both directions; existing accounts are unaffected, and administrators can still create accounts from Site Administration while registrations are off. Both directions ask for confirmation.
 
 ### Configure
 
@@ -191,19 +195,20 @@ Has Gitea sign the commits it creates itself — pull request merges, and option
 - **The key:** init generates an ed25519 GPG key once, in the keyring Gitea reads (`/data/gitea/home/.gnupg`), and records its fingerprint and public key in `store.json`. Turning signing off keeps the key, so turning it back on keeps the same signer.
 - **What it changes:** `signing` in `store.json`, passed as `GITEA__repository_0X2E_signing__*` on the next start.
 - **Options:** signer name and email (the identity Gitea displays for its signing key, not a committer override under the default trust model); which merges to sign — always, only approved pull requests (default), only when the base branch is signed, or only when every pull request commit is signed; and whether to sign web edits.
-- **Result:** the armored public key, for adding wherever Gitea's signatures need to verify.
+- **Result:** the armored public key, copyable and downloadable as `gitea-signing-key.asc`, for adding wherever Gitea's signatures need to verify.
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** idempotent; the form is pre-filled.
 
 ## Tasks
 
-One task, and it is raised by a check rather than unconditionally.
+Two tasks, each raised by a check rather than unconditionally.
 
-| Task              | Severity    | Raised when                                               | Cleared when    |
-| ----------------- | ----------- | --------------------------------------------------------- | --------------- |
-| Create Admin User | `important` | The service is running and Gitea reports no admin account | The action runs |
+| Task              | Severity    | Raised when                                                          | Cleared when                                    |
+| ----------------- | ----------- | -------------------------------------------------------------------- | ----------------------------------------------- |
+| Create Admin User | `important` | The service is running and Gitea reports no admin account            | The action runs                                 |
+| Set Primary URL   | `important` | No primary URL is chosen, or the chosen one is not an `http` address | An address is chosen, or the chosen one returns |
 
-`important` rather than `critical`: an admin-less Gitea still starts and serves, so blocking it would be worse than prompting. The check runs after the daemon is up, which is why the task appears a moment after a fresh install rather than at install time.
+Both are `important` rather than `critical`. Without a primary URL Gitea runs on its `.local` address, and an admin-less Gitea still starts and serves, so blocking it would be worse than prompting. The check runs after the daemon is up, which is why the task appears a moment after a fresh install rather than at install time.
 
 ## Health Checks
 
@@ -221,7 +226,7 @@ The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No du
 
 - **Included:** every repository and its LFS objects, the database with accounts and settings, and `store.json` with the secret key, root URL, SMTP settings, Configure settings, and signing settings. The signing keyring travels with the volume, so a restored server signs with the same key.
 - **Upgrades:** Gitea migrates its SQLite schema on first start. Package downgrades across this schema upgrade are blocked; recovery to an older release requires a pre-update backup.
-- **Restore:** complete. Because the secret key travels with the backup, stored credentials and tokens keep working, and no admin task is raised since the account already exists. If the restored server does not publish the address the backup recorded, init picks a local one — check [Set Primary URL](#actions) before handing out clone URLs.
+- **Restore:** complete. Because the secret key travels with the backup, stored credentials and tokens keep working, and no admin task is raised since the account already exists. If the restored server does not publish the address the backup recorded, Gitea uses the `.local` address and the Set Primary URL task is raised — check [Set Primary URL](#set-primary-url) before handing out clone URLs.
 
 ## Limitations and Differences
 
@@ -229,7 +234,7 @@ The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No du
 2. **Registrations are disabled at install**; the first admin is created through an action.
 3. **The SSH port is assigned by StartOS**, not fixed at 22 externally, and Gitea is told what it is so clone URLs are correct.
 4. **The session cookie is renamed** to avoid a collision with other services on the same host.
-5. **The root URL is re-asserted when the recorded address stops being published**, so a network change can move the base of newly-generated links.
+5. **While the chosen primary URL is not published, Gitea uses its `.local` address** for newly generated links, and a task asks for another choice.
 
 ---
 
@@ -296,6 +301,7 @@ actions:
   - commit-signing
 tasks:
   - { action: create-admin, severity: important }
+  - { action: set-primary-url, severity: important } # while unset or unpublished
 health_checks:
   - primary # the daemon's ready check, displayed "Web Interface"
 ```

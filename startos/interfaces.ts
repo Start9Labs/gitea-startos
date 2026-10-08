@@ -1,6 +1,7 @@
 import { sdk } from './sdk'
 import { httpInterfaceId, mainHostId, sshInterfaceId, uiPort } from './utils'
 import { i18n } from './i18n'
+import { primaryUrl } from './primaryUrl'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const uiMulti = sdk.MultiHost.of(effects, mainHostId)
@@ -9,6 +10,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const httpOrigin = await uiMulti.bindPort(uiPort, {
     protocol: 'http',
   })
+  const preferredLauncherAddress = await primaryUrl.bestUsable(effects).const()
   const httpInterface = sdk.createInterface(effects, {
     name: i18n('Web UI and git (HTTP)'),
     id: httpInterfaceId,
@@ -19,6 +21,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     username: null,
     path: '',
     query: {},
+    preferredLauncherAddress,
   })
   const httpReceipt = await httpOrigin.export([httpInterface])
 

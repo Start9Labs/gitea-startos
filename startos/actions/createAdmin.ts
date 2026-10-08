@@ -8,13 +8,17 @@ const { InputSpec, Value } = sdk
 export const inputSpec = InputSpec.of({
   username: Value.text({
     name: i18n('Username'),
-    description: i18n('The username for the administrator account'),
+    description: i18n(
+      'Used to sign in, and appears in the address of every repository this account owns.',
+    ),
     required: true,
     default: null,
   }),
   email: Value.text({
     name: i18n('Email'),
-    description: i18n('The email address for the administrator account'),
+    description: i18n(
+      "Where Gitea sends this account's notifications and password resets, once SMTP is configured.",
+    ),
     required: true,
     default: null,
     patterns: [utils.Patterns.email],

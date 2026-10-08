@@ -29,7 +29,10 @@ export const inputSpec = InputSpec.of({
 
     return {
       name: i18n('Admin User'),
-      default: admins[0],
+      description: i18n(
+        'The administrator whose password is replaced. Their current password stops working.',
+      ),
+      default: null,
       values: admins.reduce(
         (obj, name) => ({
           ...obj,

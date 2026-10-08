@@ -56,20 +56,18 @@ Notes de version complètes : https://github.com/go-gitea/gitea/releases/tag/v1.
           base: sdk.volumes.main,
           subpath: 'start9/config.yaml',
         },
-        z
-          .object({
-            'email-notifications': z
-              .object({
-                'smtp-host': z.string().optional(),
-                'smtp-port': z.number().optional(),
-                'smtp-user': z.string().optional(),
-                'smtp-pass': z.string().optional(),
-                'from-name': z.string().optional(),
-              })
-              .optional(),
-            'local-mode': z.boolean().optional(),
-          })
-          .strip(),
+        z.looseObject({
+          'email-notifications': z
+            .looseObject({
+              'smtp-host': z.string().optional(),
+              'smtp-port': z.number().optional(),
+              'smtp-user': z.string().optional(),
+              'smtp-pass': z.string().optional(),
+              'from-name': z.string().optional(),
+            })
+            .optional(),
+          'local-mode': z.boolean().optional(),
+        }),
       )
         .read()
         .once()

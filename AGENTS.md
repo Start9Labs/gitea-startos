@@ -18,16 +18,23 @@ Freshly scaffolded? Work the
 guide page, not a file in this repo — read it, don't copy it in.
 
 Keep `README.md` (technical reference for an AI support or administering agent) and
-`instructions.md` (end-user docs) in sync with your changes.
+`instructions.md` (end-user docs) in sync with your changes. This file restates neither:
+whoever changes the package has both, so it carries only what they don't — repo mechanics,
+a change that looks right and is not, where the next thing gets added, a naming trap, a
+build or test invocation particular to this repo.
 
-**Bugs and feature requests are GitHub issues on this repo** — file them as you find them.
+**Fix a defect you spot rather than reporting it** — you have the package open and the
+context to be sure. File **a GitHub issue on this repo** only when the call isn't yours to
+make: you can't pin the cause down, two defensible fixes exist, or it's too large to ride on
+the work in hand. An open issue is a report, not a queue — implement one when you're asked
+to or when it's labelled `Approved`, then close it with `Closes #<n>`.
+
 Don't record work in the repo instead: no `TODO.md`, no `NOTES.md`, no `PLAN.md`. What you
 verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **This package and `forgejo-startos` are near-identical by design.** Same structure, same actions, same init flow; the differences are the `GITEA__` environment prefix, the upstream image, the MIT license, and riscv64 support. A fix to one almost always belongs in the other — check before assuming it does not.
-- **`GITEA__session__COOKIE_NAME` is not cosmetic.** Gitea's default cookie name is generic, and browser cookies are scoped by host rather than by port — so another service on the same StartOS host can overwrite it and 500 the login with a stale value. Don't remove it, and don't let it collide with Forgejo's.
-- **`SSH_PORT` must be read back from the binding, never hardcoded.** StartOS assigns the external port; the clone URLs Gitea renders come from this value, so a fixed 22 shows users a port that is not listening.
-- **The admin task is raised from a oneshot after `primary`, not from init.** It asks Gitea whether an admin exists, which needs a running instance — that is also why `create-admin` and `reset-admin` are `only-running`. A restored install has an admin already and correctly gets no task.
-- **`ROOT_URL` is re-asserted at init when the stored address is no longer published**, so a network change cannot strand every generated link. Keep the check, and keep `.local` as the fallback rather than the preference.
+- **This package and `forgejo-startos` are near-identical by design.** A fix to one almost always belongs in the other — check before assuming it does not.
+- **`gitea-runner-startos` imports this repo at `#next`:** `startos/actions/configure` (its task sets `GITEA__actions__ENABLED`) and `mainHostId`/`uiPort` from `startos/utils`, and it gates on the `primary` health check. Renaming any of them, or a `configure` input key, breaks the runner's build or its task.
+- **Read Gitea's URL from `primaryUrl.bestUsable`, never from `store.json`'s `GITEA__server__ROOT_URL`.** Despite its name that key is only the user's choice, and it stays stale while the chosen address is unpublished.
+- **Keep `GITEA__session__COOKIE_NAME`, and keep `SSH_PORT` read from the binding.** A generic cookie name collides with other services on the same host and 500s the login; a hardcoded 22 shows users a port that is not listening.

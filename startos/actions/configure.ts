@@ -26,7 +26,9 @@ export const inputSpec = InputSpec.of({
   }),
   GITEA__repository__DEFAULT_PRIVATE: Value.select({
     name: i18n('Default Repository Visibility'),
-    description: i18n('Visibility preselected when creating a repository.'),
+    description: i18n(
+      'Preselected when someone creates a repository; they can still change it.\n- Last used: the visibility that person chose for their previous repository\n- Private: visible only to the owner and people given access\n- Public: visible to everyone who can view this server',
+    ),
     default: configDefaults.GITEA__repository__DEFAULT_PRIVATE,
     values: {
       last: i18n('Last used'),
@@ -69,7 +71,9 @@ export const inputSpec = InputSpec.of({
   }),
   GITEA__service__DEFAULT_USER_VISIBILITY: Value.select({
     name: i18n('Default User Visibility'),
-    description: i18n('Visibility given to newly created accounts.'),
+    description: i18n(
+      'The visibility new accounts start with; each user can change their own later.\n- Public: visible to everyone\n- Limited (signed-in users only): visible only to signed-in users\n- Private: visible only to members of organizations the user has joined',
+    ),
     default: configDefaults.GITEA__service__DEFAULT_USER_VISIBILITY,
     values: {
       public: i18n('Public'),
@@ -79,7 +83,9 @@ export const inputSpec = InputSpec.of({
   }),
   GITEA__server__LANDING_PAGE: Value.select({
     name: i18n('Landing Page'),
-    description: i18n('Page shown to visitors at the root URL.'),
+    description: i18n(
+      "What visitors who are not signed in see at Gitea's root address.\n- Home: Gitea's welcome page\n- Explore: the list of repositories they can see\n- Organizations: the list of organizations\n- Sign In: the sign-in page",
+    ),
     default: configDefaults.GITEA__server__LANDING_PAGE,
     values: {
       home: i18n('Home'),

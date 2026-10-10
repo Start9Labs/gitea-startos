@@ -72,7 +72,7 @@ One model, holding the values Gitea's installation wizard would otherwise ask fo
 | `signing`                              | The Commit Signing action              | Off by default                                             |
 | `signingKey`                           | Init, when missing                     | Gitea's GPG key fingerprint and public key; never replaced |
 
-**The stored `GITEA__server__ROOT_URL` is the choice, not what Gitea receives.** On each start the package passes `primaryUrl.bestUsable` (`sdk.setupPrimaryUrl`): the stored URL at its hostname's current port and scheme while that hostname is one of the `http` interface's addresses, and the `.local` address otherwise. The stored choice is never overwritten, so Gitea returns to it when the address comes back. An empty value means nothing has been chosen yet.
+**The stored `GITEA__server__ROOT_URL` is the choice, not what Gitea receives.** On each start the package passes `primaryUrl.bestUsable` (`sdk.setupPrimaryUrl`): the stored URL at its hostname's current port and scheme while that hostname is one of the `http` interface's addresses, and a public domain (HTTPS preferred) or, if none exists, the `.local` address otherwise. The stored choice is never overwritten, so Gitea returns to it when the address comes back. An empty value means nothing has been chosen yet.
 
 The package supplies configuration through environment variables, composed fresh on each start. The upstream entrypoint persists these overrides in `/data/gitea/conf/app.ini`:
 
@@ -107,7 +107,7 @@ The SSH interface's external port is assigned by StartOS rather than fixed, whic
 
 ## Installation and First-Run Flow
 
-Gitea's installation wizard never appears: install generates the secret key and locks the installer. No primary URL is chosen yet, so Gitea uses the `.local` address and a task asks you to choose one.
+Gitea's installation wizard never appears: install generates the secret key and locks the installer. No primary URL is chosen yet, so Gitea uses a public domain if available, otherwise the `.local` address, and a task asks for a choice.
 
 That leaves one thing outstanding, and the package checks for it rather than assuming. Once the service is running, a oneshot asks Gitea whether any admin account exists; if none does, it raises a task pointing at Create Admin User. On a restored install the account already exists and no task appears.
 
@@ -115,7 +115,7 @@ Since registrations are disabled at install, creating that first admin through t
 
 ## Actions
 
-Seven actions, all user-facing.
+Seven actions. Create Admin User is hidden from the action list and runs through its task.
 
 ### Create Admin User
 
@@ -136,12 +136,12 @@ Generates a new password for an existing admin account. Run it when locked out.
 
 ### Set Primary URL
 
-Chooses which published address Gitea treats as its own — the base for clone URLs, links, and outbound email, and the address Open UI opens. Built by `sdk.setupPrimaryUrl`; the select preselects the `.local` address.
+Chooses which published address Gitea treats as its own — the base for clone URLs, links, and outbound email, and the address Open UI opens. Built by `sdk.setupPrimaryUrl`; with no valid stored choice, the select prefers a public domain (HTTPS first), otherwise the `.local` address.
 
 - **What it changes:** `GITEA__server__ROOT_URL` in `store.json`, which becomes Gitea's `ROOT_URL` and `SSH_DOMAIN` while it is one of the interface's addresses.
 - **Cost:** seconds, then a restart.
 - **Repeat safety:** idempotent. Clone URLs already copied into someone's git remote keep pointing at the old address.
-- **Input:** a dropdown of the interface's non-local addresses, so an unreachable URL cannot be chosen.
+- **Input:** a dropdown of the interface's published addresses.
 
 ### Registrations
 
@@ -208,7 +208,7 @@ Two tasks, each raised by a check rather than unconditionally.
 | Create Admin User | `important` | The service is running and Gitea reports no admin account            | The action runs                                 |
 | Set Primary URL   | `important` | No primary URL is chosen, or the chosen one is not an `http` address | An address is chosen, or the chosen one returns |
 
-Both are `important` rather than `critical`. Without a primary URL Gitea runs on its `.local` address, and an admin-less Gitea still starts and serves, so blocking it would be worse than prompting. The check runs after the daemon is up, which is why the task appears a moment after a fresh install rather than at install time.
+Both are `important` rather than `critical`. Without a primary URL Gitea runs on a public domain if available, otherwise its `.local` address, and an admin-less Gitea still starts and serves, so blocking it would be worse than prompting. The check runs after the daemon is up, which is why the task appears a moment after a fresh install rather than at install time.
 
 ## Health Checks
 
@@ -225,8 +225,8 @@ It probes Gitea's own health endpoint through the service bridge using `curl --f
 The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No dump step and nothing excluded.
 
 - **Included:** every repository and its LFS objects, the database with accounts and settings, and `store.json` with the secret key, root URL, SMTP settings, Configure settings, and signing settings. The signing keyring travels with the volume, so a restored server signs with the same key.
-- **Upgrades:** Gitea migrates its SQLite schema on first start. Package downgrades across this schema upgrade are blocked; recovery to an older release requires a pre-update backup.
-- **Restore:** complete. Because the secret key travels with the backup, stored credentials and tokens keep working, and no admin task is raised since the account already exists. If the restored server does not publish the address the backup recorded, Gitea uses the `.local` address and the Set Primary URL task is raised — check [Set Primary URL](#set-primary-url) before handing out clone URLs.
+- **Upgrades:** Gitea migrates its SQLite database on first start, including repairs to legacy team permissions. Package downgrades across this schema upgrade are blocked; recovery to an older release requires a pre-update backup.
+- **Restore:** complete. Because the secret key travels with the backup, stored credentials and tokens keep working, and no admin task is raised since the account already exists. If the restored server does not publish the address the backup recorded, Gitea uses a public domain if available, otherwise the `.local` address, and the Set Primary URL task is raised — check [Set Primary URL](#set-primary-url) before handing out clone URLs.
 
 ## Limitations and Differences
 
@@ -234,7 +234,7 @@ The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. No du
 2. **Registrations are disabled at install**; the first admin is created through an action.
 3. **The SSH port is assigned by StartOS**, not fixed at 22 externally, and Gitea is told what it is so clone URLs are correct.
 4. **The session cookie is renamed** to avoid a collision with other services on the same host.
-5. **While the chosen primary URL is not published, Gitea uses its `.local` address** for newly generated links, and a task asks for another choice.
+5. **While the chosen primary URL is not published, Gitea uses a public domain if available, otherwise its `.local` address** for newly generated links, and a task asks for another choice.
 
 ---
 

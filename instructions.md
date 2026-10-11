@@ -12,7 +12,7 @@
 
 ## Getting set up
 
-On first start Gitea posts a **Create Admin User** task. Until you complete it, the service has no administrator. It also posts a **Set Primary URL** task; until you choose, Gitea uses its `.local` address.
+On first start Gitea posts a **Create Admin User** task. Until you complete it, the service has no administrator. It also posts a **Set Primary URL** task; until you choose, Gitea uses a public domain if available, otherwise its `.local` address.
 
 1. Start Gitea and wait for the **Create Admin User** task.
 2. Run the **Create Admin User** task. Provide a username and email. A strong password is generated and shown once — copy it before dismissing the result. If you lose it later, run **Reset Admin Password**.
@@ -32,7 +32,7 @@ Open the **git (SSH)** interface to see the SSH host and port. Add your SSH publ
 
 ### Actions
 
-- **Set Primary URL** — pick which of the available HTTP URLs Gitea uses when generating clone URLs, links in emails, OAuth callbacks, and so on, and which one **Open UI** opens. Its hostname is also the host in the SSH clone URLs. Switch this whenever you add or change a domain you want users to see. If the chosen address stops being available, Gitea uses its `.local` address until it returns, and a task asks you to choose again.
+- **Set Primary URL** — pick which of the available HTTP URLs Gitea uses when generating clone URLs, links in emails, OAuth callbacks, and so on, and which one **Open UI** opens. Its hostname is also the host in the SSH clone URLs. Switch this whenever you add or change a domain you want users to see. If the chosen address stops being available, Gitea uses a public domain if available, otherwise its `.local` address, until it returns, and a task asks you to choose again.
 - **Enable / Disable Registrations** — toggle whether anyone with your Gitea URL can create an account. Registrations are disabled by default; the action asks for confirmation in both directions, and warns that enabling them lets anyone sign up.
 - **Configure** — set Gitea options that otherwise live only in its configuration file: the default branch name and visibility for new repositories, push-to-create, whether visitors must sign in to see anything, defaults for new accounts, the landing page, whether Gitea Actions is enabled (Gitea Runner requires it), workflow run retention, and trusted import/mirror destinations. Changes to defaults apply only to repositories and accounts created afterwards.
 - **Configure SMTP** — set the credentials Gitea uses to send mail. Choose your StartOS system SMTP or supply a custom host, port, from-address, username, and password.
@@ -47,7 +47,7 @@ For imports or mirrors from a private server, use **Allowed Migration and Mirror
 
 ### Updates and recovery
 
-Back up before updating. Gitea upgrades its database on first start. To return to an older release, restore a backup made before the update.
+Back up before updating. Gitea upgrades its database on first start, including repairs to legacy team permissions. After an update, check that your organization teams still have the intended repository access. To return to an older release, restore a backup made before the update.
 
 ### Large file storage
 

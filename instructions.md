@@ -47,7 +47,7 @@ For imports or mirrors from a private server, use **Allowed Migration and Mirror
 
 ### Updates and recovery
 
-Back up before updating. Gitea upgrades its database on first start, including repairs to legacy team permissions. After an update, check that your organization teams still have the intended repository access. To return to an older release, restore a backup made before the update.
+Back up before updating. Gitea upgrades its database on first start. To return to an older release, restore a backup made before the update.
 
 ### Large file storage
 

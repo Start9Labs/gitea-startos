@@ -102,6 +102,8 @@ export const commitSigning = sdk.Action.withInput(
         type: 'multiline',
         value: key.publicKey,
         copyable: true,
+        qr: false,
+        masked: false,
         filename: 'gitea-signing-key.asc',
       },
     }

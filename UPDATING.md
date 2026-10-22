@@ -19,8 +19,8 @@ curl -fsSL "https://hub.docker.com/v2/repositories/gitea/gitea/tags/$version" | 
 
 If the newest stable tag has no usable image, use the newest stable release whose image is published. Read its release notes for migrations or dependency requirements that raise the guide's scrutiny tier, even on a maintenance release.
 
-The pin lives in `startos/manifest/index.ts` as `images.gitea.source.dockerTag`.
+The pin lives in `startos/manifest/index.ts` as the `IMAGE` build arg of `images.gitea.source.dockerBuild`.
 
 ## Applying the bump
 
-In `startos/manifest/index.ts`, update the `dockerTag` to `gitea/gitea:<new version>` (e.g. `gitea/gitea:28.1.0`).
+In `startos/manifest/index.ts`, update the `IMAGE` build arg to `gitea/gitea:<new version>` (e.g. `gitea/gitea:28.1.0`).

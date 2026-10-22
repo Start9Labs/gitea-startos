@@ -35,7 +35,7 @@
 
 ## Image and Container Runtime
 
-The upstream image is used unmodified, with its own entrypoint, and one subcontainer runs the whole service.
+The upstream image is used with its CA store upgraded by the root `Dockerfile` (a temporary layer that comes out once upstream ships an image built on a fixed store), with its own entrypoint, and one subcontainer runs the whole service.
 
 | Property      | Value                                                          |
 | ------------- | -------------------------------------------------------------- |

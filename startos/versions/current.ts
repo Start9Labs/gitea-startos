@@ -1,17 +1,18 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '28.2.0:1',
+  version: '28.2.0:2',
   releaseNotes: {
     en_US:
-      'Stops trusting certificates from a compromised certificate authority (eMudhra).',
+      "The instructions' Documentation link opens Gitea's public documentation site.",
     es_ES:
-      'Deja de confiar en los certificados de una autoridad de certificación comprometida (eMudhra).',
+      'El enlace de Documentación de las instrucciones abre el sitio público de documentación de Gitea.',
     de_DE:
-      'Vertraut Zertifikaten einer kompromittierten Zertifizierungsstelle (eMudhra) nicht mehr.',
+      'Der Dokumentationslink in der Anleitung öffnet die öffentliche Dokumentationsseite von Gitea.',
     pl_PL:
-      'Przestaje ufać certyfikatom przejętego urzędu certyfikacji (eMudhra).',
-    fr_FR: `Ne fait plus confiance aux certificats d'une autorité de certification compromise (eMudhra).`,
+      'Odnośnik Dokumentacja w instrukcjach otwiera publiczną stronę dokumentacji Gitea.',
+    fr_FR:
+      'Le lien Documentation des instructions ouvre le site public de documentation de Gitea.',
   },
   migrations: {
     down: IMPOSSIBLE,

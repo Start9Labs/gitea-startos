@@ -2,7 +2,7 @@
 
 ## Documentation
 
-- [Gitea documentation](https://gitea.com/gitea/docs) — upstream reference covering repositories, organizations, the admin panel, Gitea Actions, the API, and `app.ini` settings.
+- [Gitea documentation](https://gitea.com/gitea/docs/src/branch/main/docs) — upstream reference covering repositories, organizations, the admin panel, Gitea Actions, the API, and `app.ini` settings.
 
 ## What you get on StartOS
 
